@@ -6,7 +6,6 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 async def get_fields_from_gemini(prompt: str) -> List[Dict[str, Any]]:
-    # TODO: Implement Gemini Flash 2.0 API call
     # For now, return demo fields based on prompt keywords
     prompt = prompt.lower()
     fields = []
