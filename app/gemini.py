@@ -6,7 +6,7 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 async def get_fields_from_gemini(prompt: str) -> List[Dict[str, Any]]:
-    # For now, return demo fields based on prompt keyword
+    # For now, return demo fields based on prompt keywords
     prompt = prompt.lower()
     fields = []
     if "email" in prompt:
