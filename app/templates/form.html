@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic User Form</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .form-wrapper {
+            max-width: 520px;
+            margin: 60px auto 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(80, 112, 255, 0.08);
+            padding: 40px 36px 32px 36px;
+            animation: fadeInUp 1s cubic-bezier(.39,.575,.565,1.000) both;
+        }
+        .form-title {
+            text-align: center;
+            color: #506fff;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 8px #506fff33;
+        }
+        .success-message {
+            background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 7px;
+            margin-bottom: 18px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 2px 8px #506fff22;
+            animation: fadeIn 1.2s cubic-bezier(.39,.575,.565,1.000) both;
+        }
+        .download-link {
+            display: inline-block;
+            margin-top: 18px;
+            color: #fff;
+            background: linear-gradient(90deg, #506fff 0%, #81ecec 100%);
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 2px 8px #506fff33;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .download-link:hover {
+            background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
+            transform: translateY(-2px) scale(1.04);
+        }
+    </style>
+</head>
+<body>
+    <div class="form-wrapper">
+        <div class="form-title">Fill the Form</div>
+        <form method="post" id="userForm" enctype="multipart/form-data">
+            {% for field in fields %}
+                <div>
+                    <label>{{ field.label }}:</label>
+                    {% if field.data_type == 'file' %}
+                        <input type="file" name="{{ field.name }}" {% if field.accept %}accept=".{{ field.accept | join(',.') }}"{% endif %} required>
+                    {% else %}
+                        <input type="{{ field.data_type }}" name="{{ field.name }}" required>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+        <a class="download-link" href="/api/v1/data/{{ form_id }}/excel">Download Excel</a>
+        <div id="successMsg" class="success-message" style="display:none;">Form submitted successfully!</div>
+    </div>
+    <script>
+    document.getElementById('userForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const response = await fetch(window.location.pathname, {
+            method: 'POST',
+            body: formData
+        });
+        if (response.ok) {
+            form.reset();
+            const msg = document.getElementById('successMsg');
+            msg.style.display = '';
+            setTimeout(() => { msg.style.display = 'none'; }, 2500);
+        }
+    }
+    </script>
+</body>
+</html>

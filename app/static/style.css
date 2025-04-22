@@ -1,0 +1,104 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+    min-height: 100vh;
+}
+h2, h3, h4 {
+    color: #273c75;
+    letter-spacing: 1px;
+}
+.container {
+    display: flex;
+    gap: 40px;
+    margin-top: 40px;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 1s cubic-bezier(.39,.575,.565,1.000) both;
+}
+.left, .right {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 32px rgba(80, 112, 255, 0.08);
+    padding: 32px 28px;
+    transition: box-shadow 0.3s;
+}
+.left:hover, .right:hover {
+    box-shadow: 0 8px 48px rgba(80, 112, 255, 0.15);
+}
+form div {
+    margin-bottom: 18px;
+}
+label {
+    display: inline-block;
+    width: 130px;
+    color: #636e72;
+    font-weight: 500;
+}
+input, textarea {
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #dfe6e9;
+    transition: border-color 0.2s;
+    font-size: 1rem;
+    width: 70%;
+    outline: none;
+}
+input:focus, textarea:focus {
+    border-color: #506fff;
+    box-shadow: 0 2px 8px #506fff22;
+}
+button {
+    padding: 10px 30px;
+    background: linear-gradient(90deg, #506fff 0%, #81ecec 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #506fff33;
+    transition: background 0.2s, transform 0.1s;
+}
+button:hover {
+    background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
+    transform: translateY(-2px) scale(1.04);
+}
+.curl-box {
+    background: #222f3e;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-family: 'Fira Mono', 'Menlo', 'Monaco', monospace;
+    margin-bottom: 16px;
+    font-size: 0.98rem;
+    box-shadow: 0 2px 8px #506fff22;
+    animation: fadeIn 1.2s cubic-bezier(.39,.575,.565,1.000) both;
+}
+.right {
+    border-left: 4px solid #506fff;
+}
+a {
+    color: #506fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #273c75;
+    text-decoration: underline;
+}
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(40px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+/* Form page enhancements */
+form {
+    animation: fadeInUp 1s cubic-bezier(.39,.575,.565,1.000) both;
+}

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dynamic Form Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .fade-in {
+            animation: fadeIn 1.2s cubic-bezier(.39,.575,.565,1.000) both;
+        }
+        .slide-up {
+            animation: fadeInUp 1s cubic-bezier(.39,.575,.565,1.000) both;
+        }
+        .logo {
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #506fff;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px #506fff33;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(120deg,#506fff,#81ecec);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 2px 8px #506fff33;
+        }
+        .api-label {
+            font-size: 1.05rem;
+            color: #636e72;
+            margin-bottom: 2px;
+        }
+        .field-card {
+            display: inline-block;
+            margin: 8px 10px 8px 0;
+            padding: 12px 22px;
+            border-radius: 10px;
+            background: #f1f6ff;
+            color: #273c75;
+            font-weight: 500;
+            box-shadow: 0 2px 8px #506fff11;
+            border: 2px solid #dfe6e9;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.1s;
+            user-select: none;
+            font-size: 1rem;
+        }
+        .field-card.selected {
+            background: linear-gradient(90deg, #506fff 0%, #81ecec 100%);
+            color: #fff;
+            border-color: #506fff;
+            transform: scale(1.05);
+        }
+        .other-fields {
+            margin-top: 18px;
+        }
+        .custom-field-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .custom-field-row input, .custom-field-row select {
+            padding: 6px 8px;
+            border-radius: 6px;
+            border: 1px solid #dfe6e9;
+            font-size: 1rem;
+        }
+        .custom-field-row .file-types {
+            width: 120px;
+        }
+        .add-custom-btn {
+            background: #506fff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: background 0.2s;
+        }
+        .add-custom-btn:hover {
+            background: #273c75;
+        }
+        .remove-custom-btn {
+            background: #ff7675;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo slide-up"><span class="logo-icon"></span> Dynamic API Form Generator</div>
+    <div class="container">
+        <div class="left slide-up">
+            <form id="promptForm">
+                <label>Select the data fields you want to collect:</label><br>
+                <div id="fieldsContainer"></div>
+                <div class="other-fields">
+                    <label>Other fields:</label>
+                    <div id="customFields"></div>
+                    <button type="button" class="add-custom-btn" onclick="addCustomField()">+ Add Custom Field</button>
+                </div>
+                <br>
+                <button type="submit">Generate API</button>
+            </form>
+        </div>
+        <div class="right fade-in" id="apiInfo" style="display:none;">
+            <div class="api-label">Your API Endpoint</div>
+            <div id="endpointUrl" style="font-weight:bold; margin-bottom:12px;"></div>
+            <div class="api-label">cURL Example</div>
+            <div class="curl-box" id="curlExample"></div>
+            <div class="api-label">Preview Form</div>
+            <a id="formLink" href="#" target="_blank">Open Form</a>
+        </div>
+    </div>
+    <script>
+    let customFieldTypes = [];
+    // Fetch field options and custom types from backend
+    async function loadFields() {
+        const resp = await fetch('/api/v1/fields');
+        const data = await resp.json();
+        const fields = data.fields;
+        customFieldTypes = data.custom_types;
+        const container = document.getElementById('fieldsContainer');
+        container.innerHTML = '';
+        fields.forEach(field => {
+            const btn = document.createElement('span');
+            btn.className = 'field-card';
+            btn.innerText = field.label;
+            btn.dataset.name = field.name;
+            btn.onclick = function() {
+                btn.classList.toggle('selected');
+            };
+            container.appendChild(btn);
+        });
+    }
+    loadFields();
+
+    function addCustomField() {
+        const idx = Date.now() + Math.floor(Math.random()*1000);
+        const row = document.createElement('div');
+        row.className = 'custom-field-row';
+        row.dataset.idx = idx;
+        row.innerHTML = `
+            <input type="text" placeholder="Field name" class="custom-name" style="width:120px;" required>
+            <select class="custom-type">
+                ${customFieldTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
+            </select>
+            <input type="text" class="file-types" placeholder="File types (pdf,doc)" style="display:none;" title="Comma separated extensions">
+            <button type="button" class="remove-custom-btn">&times;</button>
+        `;
+        row.querySelector('.custom-type').onchange = function() {
+            if (this.value === 'file') {
+                row.querySelector('.file-types').style.display = '';
+            } else {
+                row.querySelector('.file-types').style.display = 'none';
+            }
+        };
+        row.querySelector('.remove-custom-btn').onclick = function() {
+            row.remove();
+        };
+        document.getElementById('customFields').appendChild(row);
+    }
+
+    document.getElementById('promptForm').onsubmit = async function(e) {
+        e.preventDefault();
+        // Gather selected fields
+        const selected = Array.from(document.querySelectorAll('.field-card.selected')).map(x => x.dataset.name);
+        // Gather custom fields
+        const customRows = Array.from(document.querySelectorAll('.custom-field-row'));
+        const customFields = customRows.map(row => {
+            const name = row.querySelector('.custom-name').value.trim().replace(/\s+/g, '_');
+            const data_type = row.querySelector('.custom-type').value;
+            let accept = undefined;
+            if (data_type === 'file') {
+                accept = row.querySelector('.file-types').value.split(',').map(f => f.trim()).filter(f => f);
+            }
+            return name ? {name, data_type, ...(accept && accept.length ? {accept} : {})} : null;
+        }).filter(Boolean);
+        if (selected.length === 0 && customFields.length === 0) {
+            alert('Please select at least one field or add custom fields.');
+            return;
+        }
+        const response = await fetch('/api/v1/create_form', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({fields: selected, custom_fields: customFields})
+        });
+        const data = await response.json();
+        const url = data.form_url;
+        document.getElementById('endpointUrl').innerText = window.location.origin + url;
+        // Build cURL fields from actual field names
+        let curlFields = '';
+        if (data.fields && Array.isArray(data.fields)) {
+            curlFields = data.fields.map(f => `  -F \"${f.name}=your_value\" \\\n`).join('');
+        }
+        document.getElementById('curlExample').innerText = `curl -X POST \\\n${curlFields}  \"${window.location.origin}${url}\"`;
+        document.getElementById('formLink').href = url;
+        document.getElementById('formLink').innerText = 'Open Form';
+        document.getElementById('apiInfo').style.display = '';
+    };
+    </script>
+</body>
+</html>

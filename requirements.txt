@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+httpx
+pandas
+openpyxl
+python-dotenv
+jinja2
+python-multipart
+sqlalchemy
+mysqlclient
