@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: data_analyzer
+      MYSQL_USER: Anoop2
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+
+
+  fastapi:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["python", "run.py"]
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+
+volumes:
+  mysql_data:
