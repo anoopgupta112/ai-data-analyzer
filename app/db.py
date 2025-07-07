@@ -10,6 +10,12 @@ engine = create_engine(MYSQL_URL, pool_pre_ping=True, echo=False, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+class Template(Base):
+    __tablename__ = "templates"
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), unique=True, index=True)  # e.g., "HR"
+    fields = Column(JSON)  # predefined fields structure
+
 class Form(Base):
     __tablename__ = "forms"
     id = Column(Integer, primary_key=True, index=True)

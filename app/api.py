@@ -5,10 +5,22 @@ from . import gemini, storage
 from .models import FormDefinition
 from fastapi.templating import Jinja2Templates
 from .payloads import FIELD_DEFINITIONS, CUSTOM_FIELD_TYPES
+from .templates_config import get_all_templates, get_template_by_name
 
 
 def get_router(templates: Jinja2Templates):
     router = APIRouter()
+
+    @router.get("/api/v1/template_fields/{name}")
+    async def get_template_fields(name: str):
+        fields = get_template_by_name(name)
+        if not fields:
+            raise HTTPException(status_code=404, detail="Template not found")
+        return {"fields": fields}
+
+    @router.get("/api/v1/templates")
+    async def get_templates():
+        return get_all_templates()
 
     @router.get("/api/v1/fields")
     async def get_fields():
@@ -21,10 +33,12 @@ def get_router(templates: Jinja2Templates):
         custom_fields = data.get("custom_fields", [])
         # Build the field list
         fields = [f for f in FIELD_DEFINITIONS if f["name"] in selected_fields]
-        # Add custom fields as per their type and accept
         for cf in custom_fields:
-            # cf: {name, data_type, accept (optional)}
-            field = {"name": cf["name"], "label": cf["name"].replace('_', ' ').title(), "data_type": cf["data_type"]}
+            field = {
+                "name": cf["name"],
+                "label": cf["name"].replace('_', ' ').title(),
+                "data_type": cf["data_type"]
+            }
             if cf["data_type"] == "file" and cf.get("accept"):
                 field["accept"] = cf["accept"]
             fields.append(field)
