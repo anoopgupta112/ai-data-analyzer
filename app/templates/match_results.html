@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Resume Match Results</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      padding: 30px;
+      color: #2c3e50;
+    }
+    h1 {
+      color: #506fff;
+      margin-bottom: 24px;
+    }
+    .controls {
+      margin-bottom: 20px;
+    }
+    .controls input, .controls select {
+      padding: 6px 10px;
+      margin-right: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .result-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px #506fff22;
+      margin-bottom: 18px;
+    }
+    .result-card h3 {
+      margin-top: 0;
+      color: #273c75;
+    }
+    .tag {
+      display: inline-block;
+      background: #506fff;
+      color: white;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      margin-left: 6px;
+    }
+    .positive, .negative {
+      padding: 6px;
+      border-left: 4px solid;
+      margin-top: 10px;
+    }
+    .positive {
+      background: #e8f9f1;
+      border-color: #2ecc71;
+    }
+    .negative {
+      background: #fdecea;
+      border-color: #e74c3c;
+    }
+    .nested {
+      margin-left: 20px;
+      padding-left: 10px;
+      border-left: 2px dashed #ccc;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Resume Match Results</h1>
+  <div class="controls">
+    <label>Filter by Match %:</label>
+    <input type="number" id="minMatch" placeholder="Min %" />
+    <input type="number" id="maxMatch" placeholder="Max %" />
+    <button onclick="applyFilter()">Apply Filter</button>
+  </div>
+  <div id="resultsContainer"></div>
+
+  <script>
+    const rawData = JSON.parse(localStorage.getItem('matchResults'))?.matches || [];
+    let filtered = rawData;
+
+    function render(data) {
+      const container = document.getElementById('resultsContainer');
+      container.innerHTML = '';
+      data.forEach(r => {
+        let obj;
+        try {
+          obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
+        } catch (e) {
+          obj = { percent_match: 0, description: 'Invalid JSON', positive: '', negative: '' };
+        }
+
+        const div = document.createElement('div');
+        div.className = 'result-card';
+        div.innerHTML = `
+          <h3>${r.pdf_path}<span class="tag">${obj.percent_match || 0}% Match</span></h3>
+          <p><strong>Description:</strong> ${obj.description || 'N/A'}</p>
+          <div class="positive"><strong>Positive:</strong>${renderNested(obj.positive)}</div>
+          <div class="negative"><strong>Negative:</strong>${renderNested(obj.negative)}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function renderNested(value) {
+      if (Array.isArray(value)) {
+        return '<ul>' + value.map(item => {
+          if (typeof item === 'string') {
+            return `<li>${item}</li>`;
+          } else if (typeof item === 'object') {
+            return `<li>${Object.entries(item).map(([k,v]) => `
+              <div class='nested'><strong>${k}:</strong> ${Array.isArray(v) ? v.join(', ') : v}</div>`).join('')}</li>`;
+          } else {
+            return `<li>${JSON.stringify(item)}</li>`;
+          }
+        }).join('') + '</ul>';
+      } else {
+        return `<div class='nested'>${value}</div>`;
+      }
+    }
+function applyFilter() {
+  const min = parseInt(document.getElementById('minMatch').value) || 0;
+  const max = parseInt(document.getElementById('maxMatch').value) || 100;
+
+  filtered = rawData.filter(r => {
+    try {
+      const obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
+      const val = parseInt(obj.percent_match);
+      return val >= min && val <= max;
+    } catch {
+      return false;
+    }
+  });
+
+  render(filtered);
+}
+
+
+    render(rawData);
+  </script>
+</body>
+</html>

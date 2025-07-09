@@ -2,15 +2,51 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 import uuid
 from . import gemini, storage
-from .models import FormDefinition
 from fastapi.templating import Jinja2Templates
 from .payloads import FIELD_DEFINITIONS, CUSTOM_FIELD_TYPES
 from .templates_config import get_all_templates, get_template_by_name
-
+from fastapi import UploadFile, Form
+import tempfile
+import shutil
+import os
+from fastapi import UploadFile, File, Form
+from .flow2 import process_uploaded_pdfs
 
 def get_router(templates: Jinja2Templates):
     router = APIRouter()
 
+    @router.get("/match_upload", response_class=HTMLResponse)
+    async def upload_resumes_page(request: Request):
+        return templates.TemplateResponse("match_upload.html", {"request": request})
+
+    # @router.get("/match_upload", response_class=HTMLResponse)
+    # async def upload_resumes_page(request: Request):
+    #     return templates.TemplateResponse("match_upload.html", {"request": request})
+
+    @router.post("/api/v1/match_from_pdfs")
+    async def match_from_pdfs(
+            jd: str = Form(...),
+            pdf_files: list[UploadFile] = File(...)
+    ):
+        import tempfile
+        temp_dir = tempfile.mkdtemp()
+
+        results = process_uploaded_pdfs(pdf_files, jd, temp_dir)
+        return JSONResponse(content={"matches": results})
+
+    @router.get("/match_results", response_class=HTMLResponse)
+    async def match_results(request: Request):
+        return templates.TemplateResponse("match_results.html", {"request": request})
+
+    @router.post("/api/v1/match_from_excel")
+    async def match_from_excel(jd: str = Form(...), excel_file: UploadFile = Form(...)):
+        temp_dir = tempfile.mkdtemp()
+        excel_path = os.path.join(temp_dir, excel_file.filename)
+        with open(excel_path, "wb") as f:
+            shutil.copyfileobj(excel_file.file, f)
+
+        results = process_excel_and_match_jd(excel_path, jd)
+        return JSONResponse(content={"matches": results})
     @router.get("/api/v1/template_fields/{name}")
     async def get_template_fields(name: str):
         fields = get_template_by_name(name)
