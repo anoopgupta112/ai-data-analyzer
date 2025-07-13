@@ -10,9 +10,9 @@ load_dotenv()
 app = FastAPI()
 
 # Mount static and templates
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-templates = Jinja2Templates(directory="app/templates")
+templates = Jinja2Templates(directory="templates")
 
 # Include API routes
 depth_router = apis.get_router(templates)

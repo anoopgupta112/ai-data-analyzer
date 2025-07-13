@@ -39,6 +39,6 @@ def export_to_excel(form_id: str) -> str:
     submissions = [json.loads(s.data) for s in form.submissions] if form else []
     db.close()
     df = pd.DataFrame(submissions)
-    file_path = f"app/static/{form_id}_data.xlsx"
+    file_path = f"static/{form_id}_data.xlsx"
     df.to_excel(file_path, index=False)
     return file_path
