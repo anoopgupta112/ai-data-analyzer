@@ -15,7 +15,7 @@ def process_uploaded_pdfs(pdf_files: list, jd: str, save_dir: str) -> list:
         with open(save_path, "wb") as f:
             f.write(pdf.file.read())
 
-        resume_text = extract_text_from_pdf(save_path)
+        resume_text, _ = extract_text_from_pdf(save_path)
         match_report = evaluate_resume_against_jd(jd, resume_text)
 
         results.append({

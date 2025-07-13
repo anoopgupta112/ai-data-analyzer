@@ -183,7 +183,7 @@ def get_router(templates: Jinja2Templates):
                 continue
                 
             abs_pdf_path = os.path.join(os.getcwd(), pdf_path.lstrip('/'))
-            resume_text = extract_text_from_pdf(abs_pdf_path)
+            resume_text, _ = extract_text_from_pdf(abs_pdf_path)
             match_report = evaluate_resume_against_jd(jd, resume_text)
             results.append({
                 "pdf_path": os.path.basename(abs_pdf_path),
