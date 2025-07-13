@@ -2,8 +2,10 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-import os
-from . import api
+from dotenv import load_dotenv
+from app.api import apis
+
+load_dotenv()
 
 app = FastAPI()
 
@@ -13,7 +15,7 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 templates = Jinja2Templates(directory="app/templates")
 
 # Include API routes
-depth_router = api.get_router(templates)
+depth_router = apis.get_router(templates)
 app.include_router(depth_router)
 
 # Root landing page

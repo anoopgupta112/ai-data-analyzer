@@ -1,18 +1,20 @@
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 import uuid
-from . import gemini, storage
+from ..services import storage
 from fastapi.templating import Jinja2Templates
 from .payloads import FIELD_DEFINITIONS, CUSTOM_FIELD_TYPES
 from .templates_config import get_all_templates, get_template_by_name
-from fastapi import UploadFile, Form
 import tempfile
 import shutil
 import os
+import json
 from fastapi import UploadFile, File, Form
-from .flow2 import process_uploaded_pdfs
-from .utils import get_form_submissions
-from .github_agent import generate_questions_from_github
+from app.services.github_questions import process_uploaded_pdfs
+from app.services.utils import get_form_submissions
+from app.services.github_agent import generate_questions_from_github
+from ..services.match_agent import evaluate_resume_against_jd
+from ..services.ocr_engine import extract_text_from_pdf
 
 
 def get_router(templates: Jinja2Templates):
@@ -73,6 +75,7 @@ def get_router(templates: Jinja2Templates):
 
         results = process_excel_and_match_jd(excel_path, jd)
         return JSONResponse(content={"matches": results})
+
     @router.get("/api/v1/template_fields/{name}")
     async def get_template_fields(name: str):
         fields = get_template_by_name(name)
@@ -158,11 +161,6 @@ def get_router(templates: Jinja2Templates):
 
     @router.post("/api/v1/analyze_from_excel/{form_id}")
     async def analyze_from_excel(form_id: str, jd: str = Form(...), selected_pdfs: str = Form(...)):
-        import os
-        import json
-        from .ocr_engine import extract_text_from_pdf
-        from .match_agent import evaluate_resume_against_jd
-        from .github_agent import generate_questions_from_github
 
         # Get all submissions for this form
         submissions = get_form_submissions(form_id)

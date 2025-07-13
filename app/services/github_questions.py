@@ -1,6 +1,6 @@
 import os
-from .ocr_engine import extract_text_from_pdf
-from .match_agent import evaluate_resume_against_jd
+from app.services.ocr_engine import extract_text_from_pdf
+from app.services.match_agent import evaluate_resume_against_jd
 from .github_agent import generate_questions_from_github
 
 def process_uploaded_pdfs(pdf_files: list, jd: str, save_dir: str) -> list:
