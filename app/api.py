@@ -12,6 +12,7 @@ import os
 from fastapi import UploadFile, File, Form
 from .flow2 import process_uploaded_pdfs
 from .utils import get_form_submissions
+from .github_agent import generate_questions_from_github
 
 
 def get_router(templates: Jinja2Templates):
@@ -194,5 +195,17 @@ def get_router(templates: Jinja2Templates):
     @router.get("/form-builder", response_class=HTMLResponse)
     async def form_builder(request: Request):
         return templates.TemplateResponse("index.html", {"request": request})
+
+    @router.get("/github_questions", response_class=HTMLResponse)
+    async def github_questions_page(request: Request):
+        return templates.TemplateResponse("github_questions.html", {"request": request})
+
+    @router.post("/api/v1/github_questions")
+    async def github_questions(request: Request):
+        data = await request.json()
+        github_urls = data.get("github_urls", [])
+        num_questions = int(data.get("num_questions", 10))
+        result = generate_questions_from_github(github_urls, num_questions)
+        return JSONResponse(content=result)
 
     return router

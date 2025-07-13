@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GitHub Code Questions</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; padding: 30px; color: #2c3e50; }
+    .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 14px; box-shadow: 0 4px 20px #506fff22; padding: 36px; }
+    h1 { color: #506fff; margin-bottom: 18px; }
+    .summary { background: #f1f6ff; border-left: 5px solid #506fff; padding: 18px; border-radius: 8px; margin-bottom: 28px; font-size: 1.1rem; }
+    .questions { margin-bottom: 24px; }
+    .question-card { background: #e8f9f1; border-left: 4px solid #2ecc71; padding: 16px; border-radius: 8px; margin-bottom: 14px; font-size: 1.08rem; }
+    .back-btn { background: #506fff; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 18px; }
+    .back-btn:hover { background: #273c75; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>GitHub Code Questions</h1>
+    <div class="summary" id="summaryBox"></div>
+    <div class="questions" id="questionsBox"></div>
+    <button class="back-btn" onclick="window.location.href='/match_results'">Back</button>
+  </div>
+  <script>
+    const data = JSON.parse(localStorage.getItem('githubQuestions')) || {questions:[], summary:''};
+    document.getElementById('summaryBox').textContent = data.summary || 'No summary.';
+    const qBox = document.getElementById('questionsBox');
+    if (data.questions && data.questions.length) {
+      data.questions.forEach((q, i) => {
+        const div = document.createElement('div');
+        div.className = 'question-card';
+        div.innerHTML = `<b>Q${i+1}:</b> ${q}`;
+        qBox.appendChild(div);
+      });
+    } else {
+      qBox.innerHTML = '<i>No questions generated.</i>';
+    }
+  </script>
+</body>
+</html> 

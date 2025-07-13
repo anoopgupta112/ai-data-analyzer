@@ -71,6 +71,13 @@
     <input type="number" id="maxMatch" placeholder="Max %" />
     <button onclick="applyFilter()">Apply Filter</button>
   </div>
+  <div class="controls" style="margin-bottom:32px; background:#f1f6ff; padding:18px; border-radius:10px;">
+    <label style="font-weight:600;">GitHub URLs (one per line):</label><br>
+    <textarea id="githubUrls" style="width:100%;min-height:60px;margin-bottom:8px;"></textarea>
+    <label>Number of Questions:</label>
+    <input type="number" id="numQuestions" value="10" min="1" max="50" style="width:60px;">
+    <button onclick="generateGithubQuestions()" style="background:#506fff;color:white;padding:8px 18px;border:none;border-radius:6px;">Generate Questions from GitHub</button>
+  </div>
   <div id="resultsContainer"></div>
 
   <script>
@@ -116,23 +123,40 @@
         return `<div class='nested'>${value}</div>`;
       }
     }
-function applyFilter() {
-  const min = parseInt(document.getElementById('minMatch').value) || 0;
-  const max = parseInt(document.getElementById('maxMatch').value) || 100;
 
-  filtered = rawData.filter(r => {
-    try {
-      const obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
-      const val = parseInt(obj.percent_match);
-      return val >= min && val <= max;
-    } catch {
-      return false;
+    function applyFilter() {
+      const min = parseInt(document.getElementById('minMatch').value) || 0;
+      const max = parseInt(document.getElementById('maxMatch').value) || 100;
+
+      filtered = rawData.filter(r => {
+        try {
+          const obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
+          const val = parseInt(obj.percent_match);
+          return val >= min && val <= max;
+        } catch {
+          return false;
+        }
+      });
+
+      render(filtered);
     }
-  });
 
-  render(filtered);
-}
-
+    async function generateGithubQuestions() {
+      const urls = document.getElementById('githubUrls').value.split('\n').map(x => x.trim()).filter(Boolean);
+      const num = parseInt(document.getElementById('numQuestions').value) || 10;
+      if (!urls.length) { alert('Enter at least one GitHub URL.'); return; }
+      const btn = event.target; btn.disabled = true; btn.textContent = 'Generating...';
+      try {
+        const res = await fetch('/api/v1/github_questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ github_urls: urls, num_questions: num })
+        });
+        const data = await res.json();
+        localStorage.setItem('githubQuestions', JSON.stringify(data));
+        window.location.href = '/github_questions';
+      } finally { btn.disabled = false; btn.textContent = 'Generate Questions from GitHub'; }
+    }
 
     render(rawData);
   </script>
