@@ -162,6 +162,7 @@ def get_router(templates: Jinja2Templates):
         import json
         from .ocr_engine import extract_text_from_pdf
         from .match_agent import evaluate_resume_against_jd
+        from .github_agent import generate_questions_from_github
 
         # Get all submissions for this form
         submissions = get_form_submissions(form_id)
@@ -184,11 +185,27 @@ def get_router(templates: Jinja2Templates):
                 continue
                 
             abs_pdf_path = os.path.join(os.getcwd(), pdf_path.lstrip('/'))
-            resume_text, _ = extract_text_from_pdf(abs_pdf_path)
+            resume_text, links = extract_text_from_pdf(abs_pdf_path)
             match_report = evaluate_resume_against_jd(jd, resume_text)
+
+            # Extract GitHub repo links and process them
+            github_questions = []
+            if links:
+                import re
+                github_links = [l['uri'] for l in links if isinstance(l, dict) and 'uri' in l and re.match(r'https://github.com/[^/]+/[^/]+', l['uri'])]
+                unique_repos = list(set(github_links))
+                for gh_url in unique_repos:
+                    qdata = generate_questions_from_github([gh_url], 10)
+                    github_questions.append({
+                        'repo': gh_url,
+                        'questions': qdata.get('questions', []),
+                        'summary': qdata.get('summary', '')
+                    })
             results.append({
                 "pdf_path": os.path.basename(abs_pdf_path),
-                "match_report": match_report
+                "match_report": match_report,
+                "links": links,
+                "github_questions": github_questions
             })
         return JSONResponse(content=results)
 

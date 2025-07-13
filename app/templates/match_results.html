@@ -71,12 +71,13 @@
     <input type="number" id="maxMatch" placeholder="Max %" />
     <button onclick="applyFilter()">Apply Filter</button>
   </div>
+  <div id="githubLinksSection" style="margin-bottom:24px; background:#f8f9fa; padding:16px; border-radius:10px; border:1px solid #e1e8ed;">
+    <b>All GitHub Repository Links Found:</b>
+    <div id="allGithubLinks" style="margin-top:8px;"></div>
+  </div>
   <div class="controls" style="margin-bottom:32px; background:#f1f6ff; padding:18px; border-radius:10px;">
-    <label style="font-weight:600;">GitHub URLs (one per line):</label><br>
-    <textarea id="githubUrls" style="width:100%;min-height:60px;margin-bottom:8px;"></textarea>
-    <label>Number of Questions:</label>
-    <input type="number" id="numQuestions" value="10" min="1" max="50" style="width:60px;">
-    <button onclick="generateGithubQuestions()" style="background:#506fff;color:white;padding:8px 18px;border:none;border-radius:6px;">Generate Questions from GitHub</button>
+    <button onclick="showAllGithubQuestions()" style="background:#506fff;color:white;padding:10px 22px;border:none;border-radius:8px;font-size:1rem;">Show All GitHub Questions</button>
+    <button onclick="downloadAllCSVs()" style="background:#27ae60;color:white;padding:10px 22px;border:none;border-radius:8px;font-size:1rem;margin-left:12px;">Download All CSVs</button>
   </div>
   <div id="resultsContainer"></div>
 
@@ -87,7 +88,7 @@
     function render(data) {
       const container = document.getElementById('resultsContainer');
       container.innerHTML = '';
-      data.forEach(r => {
+      data.forEach((r, idx) => {
         let obj;
         try {
           obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
@@ -102,6 +103,7 @@
           <p><strong>Description:</strong> ${obj.description || 'N/A'}</p>
           <div class="positive"><strong>Positive:</strong>${renderNested(obj.positive)}</div>
           <div class="negative"><strong>Negative:</strong>${renderNested(obj.negative)}</div>
+          <div class="github-analysis" id="githubAnalysis_${idx}"></div>
         `;
         container.appendChild(div);
       });
@@ -141,24 +143,78 @@
       render(filtered);
     }
 
-    async function generateGithubQuestions() {
-      const urls = document.getElementById('githubUrls').value.split('\n').map(x => x.trim()).filter(Boolean);
-      const num = parseInt(document.getElementById('numQuestions').value) || 10;
-      if (!urls.length) { alert('Enter at least one GitHub URL.'); return; }
-      const btn = event.target; btn.disabled = true; btn.textContent = 'Generating...';
-      try {
-        const res = await fetch('/api/v1/github_questions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ github_urls: urls, num_questions: num })
-        });
-        const data = await res.json();
-        localStorage.setItem('githubQuestions', JSON.stringify(data));
-        window.location.href = '/github_questions';
-      } finally { btn.disabled = false; btn.textContent = 'Generate Questions from GitHub'; }
+    function showAllGithubQuestions() {
+      rawData.forEach((r, idx) => {
+        const analysisDiv = document.getElementById(`githubAnalysis_${idx}`);
+        if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
+          let html = '';
+          r.github_questions.forEach(qset => {
+            html += `<div style='margin-top:10px;'><b>Repo:</b> <a href='${qset.repo}' target='_blank'>${qset.repo}</a></div>`;
+            if (qset.summary) {
+              html += `<div style='margin-top:4px;'><b>Summary:</b> ${qset.summary}</div>`;
+            }
+            if (qset.questions && qset.questions.length) {
+              html += `<div style='margin-top:4px;'><b>Questions:</b><ul>` + qset.questions.map(q => `<li>${q}</li>`).join('') + '</ul></div>';
+            }
+          });
+          analysisDiv.innerHTML = html;
+        } else {
+          analysisDiv.innerHTML = '<i>No GitHub questions found for this PDF.</i>';
+        }
+      });
+    }
+
+    function downloadAllCSVs() {
+      rawData.forEach((r, idx) => {
+        if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
+          let csvContent = 'Repo,Summary,Question\n';
+          r.github_questions.forEach(qset => {
+            const repo = qset.repo ? '"' + qset.repo.replace(/"/g, '""') + '"' : '';
+            const summary = qset.summary ? '"' + qset.summary.replace(/"/g, '""') + '"' : '';
+            if (qset.questions && qset.questions.length) {
+              qset.questions.forEach(q => {
+                csvContent += `${repo},${summary},"${q.replace(/"/g, '""')}"\n`;
+              });
+            } else {
+              csvContent += `${repo},${summary},\n`;
+            }
+          });
+          // Create CSV blob and download link
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          // Create a temporary link and trigger download
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${r.pdf_path.replace(/\.[^/.]+$/, "")}_github_questions.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      });
+    }
+
+    function renderAllGithubLinks() {
+      const urls = [];
+      rawData.forEach(r => {
+        if (Array.isArray(r.links)) {
+          r.links.forEach(link => {
+            if (link && typeof link === 'object' && link.uri && /^https:\/\/github.com\/[^/]+\/[^/]+/.test(link.uri)) {
+              urls.push(link.uri.match(/^https:\/\/github.com\/[^/]+\/[^/]+/)[0]);
+            }
+          });
+        }
+      });
+      const uniqueUrls = Array.from(new Set(urls));
+      const container = document.getElementById('allGithubLinks');
+      if (uniqueUrls.length === 0) {
+        container.innerHTML = '<i>No GitHub repository links found.</i>';
+      } else {
+        container.innerHTML = uniqueUrls.map(url => `<a href='${url}' target='_blank' style='margin-right:12px;'>${url}</a>`).join('<br>');
+      }
     }
 
     render(rawData);
+    renderAllGithubLinks();
   </script>
 </body>
 </html>

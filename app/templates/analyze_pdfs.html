@@ -169,6 +169,7 @@
         <div class="controls">
             <button type="button" class="btn btn-secondary" onclick="goBack()">Back</button>
             <button type="button" class="btn btn-primary" onclick="analyzePDFs()" id="analyzeBtn">Analyze Selected PDFs</button>
+            <button type="button" class="btn btn-primary" onclick="analyzeAllPDFs()" id="analyzeAllBtn">Analyze All PDFs</button>
         </div>
 
         <div class="loading" id="loading">
@@ -264,6 +265,11 @@
             const error = document.getElementById('error');
             error.textContent = message;
             error.style.display = 'block';
+        }
+
+        function analyzeAllPDFs() {
+            selectAll();
+            analyzePDFs();
         }
 
         // Add event listeners for checkboxes

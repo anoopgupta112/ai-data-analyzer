@@ -12,8 +12,14 @@ def extract_text_from_pdf(pdf_path: str):
                 # Extract links
                 links = page.get_links()
                 for link in links:
-                    if "uri" in link:
-                        links_data += f"\n[LINK: {link['uri']}]\n"
+                    # Make a copy so we don't mutate the original
+                    link_copy = link.copy()
+                    for k, v in link_copy.items():
+                        # Convert Rect or similar objects to a list of floats
+                        if hasattr(v, 'is_rect') or type(v).__name__ == 'Rect':
+                            link_copy[k] = list(v)
+                    if "uri" in link_copy:
+                        links_data.append(link_copy)
     except Exception as e:
         print(f"[OCR ERROR] {pdf_path}: {e}")
     return text, links_data
