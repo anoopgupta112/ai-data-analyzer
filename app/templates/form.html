@@ -4,7 +4,7 @@
     <title>Dynamic User Form</title>
     <link rel="stylesheet" href="/static/style.css">
     <style>
-        .form-wrapper {
+        .form-w rapper {
             max-width: 520px;
             margin: 60px auto 0 auto;
             background: #fff;
@@ -68,6 +68,7 @@
             <button type="submit">Submit</button>
         </form>
         <a class="download-link" href="/api/v1/data/{{ form_id }}/excel">Download Excel</a>
+        <button id="analyzeAllBtn" style="display:none;margin-top:18px;">Analyze All PDFs</button>
         <div id="successMsg" class="success-message" style="display:none;">Form submitted successfully!</div>
     </div>
     <script>
@@ -84,7 +85,14 @@
             const msg = document.getElementById('successMsg');
             msg.style.display = '';
             setTimeout(() => { msg.style.display = 'none'; }, 2500);
+            document.getElementById('analyzeAllBtn').style.display = '';
         }
+    }
+    document.getElementById('analyzeAllBtn').onclick = function() {
+        // Get form_id from template context
+        const formId = '{{ form_id }}';
+        // Redirect to the analyze PDFs page
+        window.location.href = `/analyze_pdfs/${formId}`;
     }
     </script>
 </body>

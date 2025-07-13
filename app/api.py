@@ -11,9 +11,15 @@ import shutil
 import os
 from fastapi import UploadFile, File, Form
 from .flow2 import process_uploaded_pdfs
+from .utils import get_form_submissions
+
 
 def get_router(templates: Jinja2Templates):
     router = APIRouter()
+
+    @router.get("/", response_class=HTMLResponse)
+    async def landing_page(request: Request):
+        return templates.TemplateResponse("landing.html", {"request": request})
 
     @router.get("/match_upload", response_class=HTMLResponse)
     async def upload_resumes_page(request: Request):
@@ -37,6 +43,25 @@ def get_router(templates: Jinja2Templates):
     @router.get("/match_results", response_class=HTMLResponse)
     async def match_results(request: Request):
         return templates.TemplateResponse("match_results.html", {"request": request})
+
+    @router.get("/analyze_pdfs/{form_id}", response_class=HTMLResponse)
+    async def analyze_pdfs_page(request: Request, form_id: str):
+        # Get all submissions for this form to show available PDFs
+        submissions = get_form_submissions(form_id)
+        pdf_list = []
+        for sub in submissions:
+            if 'resume' in sub and sub['resume']:
+                pdf_name = sub['resume'].split('/')[-1] if '/' in sub['resume'] else sub['resume']
+                pdf_list.append({
+                    'name': pdf_name,
+                    'path': sub['resume'],
+                    'submission_id': sub.get('id', '')
+                })
+        return templates.TemplateResponse("analyze_pdfs.html", {
+            "request": request, 
+            "form_id": form_id,
+            "pdfs": pdf_list
+        })
 
     @router.post("/api/v1/match_from_excel")
     async def match_from_excel(jd: str = Form(...), excel_file: UploadFile = Form(...)):
@@ -129,5 +154,45 @@ def get_router(templates: Jinja2Templates):
             raise HTTPException(status_code=404, detail="No data found.")
         file_path = storage.export_to_excel(form_id)
         return FileResponse(file_path, filename=f"{form_id}_data.xlsx")
+
+    @router.post("/api/v1/analyze_from_excel/{form_id}")
+    async def analyze_from_excel(form_id: str, jd: str = Form(...), selected_pdfs: str = Form(...)):
+        import os
+        import json
+        from .ocr_engine import extract_text_from_pdf
+        from .match_agent import evaluate_resume_against_jd
+
+        # Get all submissions for this form
+        submissions = get_form_submissions(form_id)
+        if not submissions:
+            return JSONResponse(content={"error": "No submissions found."}, status_code=404)
+
+        # Parse selected PDFs
+        selected_pdf_list = json.loads(selected_pdfs) if selected_pdfs else []
+        
+        results = []
+        for sub in submissions:
+            # Assume the resume file is stored under the key 'resume'
+            pdf_path = sub.get('resume')
+            if not pdf_path or not os.path.exists(os.path.join(os.getcwd(), pdf_path.lstrip('/'))):
+                continue
+            
+            # Check if this PDF is selected for analysis
+            pdf_name = pdf_path.split('/')[-1] if '/' in pdf_path else pdf_path
+            if selected_pdf_list and pdf_name not in selected_pdf_list:
+                continue
+                
+            abs_pdf_path = os.path.join(os.getcwd(), pdf_path.lstrip('/'))
+            resume_text = extract_text_from_pdf(abs_pdf_path)
+            match_report = evaluate_resume_against_jd(jd, resume_text)
+            results.append({
+                "pdf_path": os.path.basename(abs_pdf_path),
+                "match_report": match_report
+            })
+        return JSONResponse(content=results)
+
+    @router.get("/form-builder", response_class=HTMLResponse)
+    async def form_builder(request: Request):
+        return templates.TemplateResponse("index.html", {"request": request})
 
     return router
