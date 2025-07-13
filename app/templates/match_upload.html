@@ -41,6 +41,22 @@
     button:hover {
       background: #405ee6;
     }
+    /* Spinner styles */
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #fff;
+      border-top: 3px solid #506fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -52,7 +68,7 @@
     <label>Select Resume Folder:</label>
     <input type="file" id="resumeFiles" multiple accept="application/pdf" webkitdirectory mozdirectory>
 
-    <button type="submit">Match with JD</button>
+    <button type="submit" id="matchBtn"><span id="btnText">Match with JD</span><span id="btnSpinner" class="spinner" style="display:none;"></span></button>
   </form>
 
   <script>
@@ -66,20 +82,32 @@
         return;
       }
 
-      const formData = new FormData();
-      formData.append('jd', jd);
-      for (let file of files) {
-        formData.append('pdf_files', file);
+      // Show spinner, hide text, disable button
+      document.getElementById('btnText').style.display = 'none';
+      document.getElementById('btnSpinner').style.display = '';
+      document.getElementById('matchBtn').disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('jd', jd);
+        for (let file of files) {
+          formData.append('pdf_files', file);
+        }
+
+        const res = await fetch('/api/v1/match_from_pdfs', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await res.json();
+        localStorage.setItem('matchResults', JSON.stringify(result));
+        window.location.href = '/match_results';
+      } finally {
+        // Restore button state if not redirected
+        document.getElementById('btnText').style.display = '';
+        document.getElementById('btnSpinner').style.display = 'none';
+        document.getElementById('matchBtn').disabled = false;
       }
-
-      const res = await fetch('/api/v1/match_from_pdfs', {
-        method: 'POST',
-        body: formData
-      });
-
-      const result = await res.json();
-      localStorage.setItem('matchResults', JSON.stringify(result));
-      window.location.href = '/match_results';
     }
   </script>
 </body>
