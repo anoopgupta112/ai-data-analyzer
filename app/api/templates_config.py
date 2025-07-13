@@ -1,5 +1,3 @@
-# templates_config.py
-
 TEMPLATES = {
     "HR": [
         {"name": "full_name", "label": "Full Name", "data_type": "text"},

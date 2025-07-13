@@ -57,7 +57,13 @@ def generate_questions_from_github(github_urls: List[str], num_questions: int = 
         return {"questions": [], "summary": "No code found."}
     prompt = f"""
 You are a technical interviewer. Read the following code (from multiple GitHub repos, max 200 lines per file). 
-Generate {num_questions} insightful technical questions about the codebase, and a short summary (like a resume) of the codebase's purpose and technologies.
+Generate {num_questions} insightful technical basic questions about the codebase and the code not be asking like from this file
+ you have used this so what it works in your project,
+ make question common like suppose a person use for loop then you should not be asking like why you used for loop in you app.py
+  instead of this ask like when we use for loop (general question), and a short summary (like a resume) of the codebase's purpose and technologies.
+  don't use like in this project, in this file, or in this repo make it general question.
+  and ask only basic questions
+
 
 Respond ONLY with a JSON object with keys:
 - questions: array of strings
