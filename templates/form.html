@@ -2,56 +2,142 @@
 <html>
 <head>
     <title>Dynamic User Form</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        .form-w rapper {
+        :root {
+            --bg: #0b1220;
+            --panel: #0f172a;
+            --muted: #9fb0c5;
+            --line: #1e2d49;
+            --acc: #6366f1;
+            --acc2: #22d3ee;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        html, body {
+            margin: 0;
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(180deg, rgba(2,6,23,.85), rgba(2,6,23,.5));
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #11213a;
+            padding: 14px 28px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a {
+            color: var(--muted);
+            text-decoration: none;
+            margin-left: 16px;
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 6px 10px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .navbar a:hover {
+            background: #0c1e37;
+            border: 1px solid #2a3f63;
+        }
+        .form-wrapper {
             max-width: 520px;
-            margin: 60px auto 0 auto;
-            background: #fff;
+            margin: 40px auto;
+            background: var(--panel);
             border-radius: 16px;
-            box-shadow: 0 4px 32px rgba(80, 112, 255, 0.08);
-            padding: 40px 36px 32px 36px;
-            animation: fadeInUp 1s cubic-bezier(.39,.575,.565,1.000) both;
+            border: 1px solid var(--line);
+            padding: 40px 36px 32px;
         }
         .form-title {
             text-align: center;
-            color: #506fff;
+            color: var(--acc);
             font-size: 2rem;
             font-weight: bold;
             letter-spacing: 1px;
             margin-bottom: 24px;
-            text-shadow: 0 2px 8px #506fff33;
         }
-        .success-message {
-            background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
-            color: #fff;
-            padding: 12px 18px;
-            border-radius: 7px;
-            margin-bottom: 18px;
-            text-align: center;
-            font-weight: 500;
-            box-shadow: 0 2px 8px #506fff22;
-            animation: fadeIn 1.2s cubic-bezier(.39,.575,.565,1.000) both;
+        label {
+            display: block;
+            font-weight: 600;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            color: var(--muted);
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #213456;
+            font-size: 1rem;
+            background: #0b172c;
+            color: #e5edff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--acc);
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+            outline: none;
+        }
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: 1px solid #213456;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.05rem;
+            background: #0f2039;
+            color: #cfe4ff;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s, border-color 0.2s;
+        }
+        button:hover {
+            background: #0d2443;
+            border-color: #2c4e86;
+            transform: translateY(-2px);
         }
         .download-link {
             display: inline-block;
             margin-top: 18px;
-            color: #fff;
-            background: linear-gradient(90deg, #506fff 0%, #81ecec 100%);
-            padding: 10px 20px;
+            background: linear-gradient(90deg, #10b981, #22d3ee);
+            padding: 10px 16px;
             border-radius: 6px;
             font-weight: bold;
             text-decoration: none;
-            box-shadow: 0 2px 8px #506fff33;
+            color: #00131f;
             transition: background 0.2s, transform 0.1s;
         }
         .download-link:hover {
-            background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
-            transform: translateY(-2px) scale(1.04);
+            background: linear-gradient(90deg, #22d3ee, #10b981);
+            transform: translateY(-2px);
+        }
+        .success-message {
+            background: linear-gradient(90deg, var(--acc2), var(--acc));
+            color: white;
+            padding: 12px 18px;
+            border-radius: 7px;
+            margin-top: 18px;
+            text-align: center;
+            font-weight: 500;
+            display: none;
         }
     </style>
 </head>
 <body>
+    <div class="navbar">
+        <div>Dynamic User Form</div>
+        <div>
+            <a href="/">Home</a>
+            <a href="/form-builder">Form Builder</a>
+            <a href="/match_results">Results</a>
+        </div>
+    </div>
+
     <div class="form-wrapper">
         <div class="form-title">Fill the Form</div>
         <form method="post" id="userForm" enctype="multipart/form-data">
@@ -68,9 +154,10 @@
             <button type="submit">Submit</button>
         </form>
         <a class="download-link" href="/api/v1/data/{{ form_id }}/excel">Download Excel</a>
-        <button id="analyzeAllBtn" style="display:none;margin-top:18px;">Analyze All PDFs</button>
-        <div id="successMsg" class="success-message" style="display:none;">Form submitted successfully!</div>
+        <button id="analyzeAllBtn" style="display:none;">Analyze All PDFs</button>
+        <div id="successMsg" class="success-message">Form submitted successfully!</div>
     </div>
+
     <script>
     document.getElementById('userForm').onsubmit = async function(e) {
         e.preventDefault();
@@ -83,15 +170,13 @@
         if (response.ok) {
             form.reset();
             const msg = document.getElementById('successMsg');
-            msg.style.display = '';
+            msg.style.display = 'block';
             setTimeout(() => { msg.style.display = 'none'; }, 2500);
-            document.getElementById('analyzeAllBtn').style.display = '';
+            document.getElementById('analyzeAllBtn').style.display = 'block';
         }
     }
     document.getElementById('analyzeAllBtn').onclick = function() {
-        // Get form_id from template context
         const formId = '{{ form_id }}';
-        // Redirect to the analyze PDFs page
         window.location.href = `/analyze_pdfs/${formId}`;
     }
     </script>

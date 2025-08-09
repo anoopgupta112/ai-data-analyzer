@@ -2,214 +2,89 @@
 <html>
 <head>
   <title>Dynamic Form Generator</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f7fa;
-      margin: 0;
-      padding: 30px;
-    }
-
-    .logo {
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-      color: #506fff;
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      background: linear-gradient(120deg, #506fff, #81ecec);
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 12px;
-    }
-
-    .template-buttons {
-      margin-bottom: 28px;
-    }
-
-    .template-btn {
-      margin: 6px 10px 6px 0;
-      padding: 8px 16px;
-      background: #f1f6ff;
-      border: 2px solid #506fff;
-      color: #506fff;
-      border-radius: 20px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .template-btn:hover {
-      background: #506fff;
-      color: #fff;
-    }
-
-    .container {
-      display: flex;
-      gap: 40px;
-      align-items: flex-start;
-      flex-wrap: wrap;
-    }
-
-    .left, .right {
-      flex: 1;
-      min-width: 350px;
-    }
-
-    form {
-      background: #fff;
-      padding: 30px 24px;
-      border-radius: 14px;
-      box-shadow: 0 4px 20px #506fff22;
-    }
-
-    label {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #273c75;
-      margin-bottom: 12px;
-    }
-
-    .field-card {
-      display: inline-block;
-      margin: 6px 10px 6px 0;
-      padding: 10px 18px;
-      border-radius: 18px;
-      background: #f1f6ff;
-      color: #273c75;
-      font-weight: 500;
-      border: 2px solid #dfe6e9;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .field-card.selected {
-      background: linear-gradient(90deg, #506fff, #81ecec);
-      color: white;
-      border-color: #506fff;
-    }
-
-    .other-fields {
-      margin-top: 24px;
-    }
-
-    .custom-field-row {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 12px;
-      align-items: center;
-    }
-
-    .custom-field-row input,
-    .custom-field-row select {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #dfe6e9;
-      font-size: 1rem;
-    }
-
-    .add-custom-btn {
-      background: #506fff;
-      color: #fff;
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-    }
-
-    .add-custom-btn:hover {
-      background: #273c75;
-    }
-
-    .remove-custom-btn {
-      background: #ff7675;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .right {
-      padding: 20px;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px #506fff11;
-    }
-
-    .api-label {
-      font-weight: 600;
-      color: #506fff;
-      margin-top: 14px;
-      margin-bottom: 6px;
-    }
-
-    .curl-box {
-      background: #000000;
-      padding: 12px;
-      border-radius: 8px;
-      font-family: monospace;
-      white-space: pre-wrap;
-      font-size: 0.9rem;
-    }
-
-    #formLink {
-      display: inline-block;
-      margin-top: 14px;
-      background: #506fff;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    #formLink:hover {
-      background: #273c75;
-    }
+    :root{--bg:#0b1220;--panel:#0f172a;--muted:#9fb0c5;--line:#1e2d49;--acc:#6366f1;--acc2:#22d3ee}
+    *{box-sizing:border-box} html,body{margin:0;background:#0b1220;color:#e2e8f0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    /* Nav */
+    .nav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(2,6,23,.85),rgba(2,6,23,.5));backdrop-filter:blur(8px);border-bottom:1px solid #11213a}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .dot{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 140deg,#6366f1,#22d3ee,#38bdf8,#6366f1)}
+    .links{margin-left:auto;display:flex;gap:12px}
+    .link{padding:8px 12px;border-radius:10px;color:#cbd5e1;border:1px solid transparent}
+    .link:hover{border-color:#2a3f63;background:#0c1e37}
+    .cta{background:linear-gradient(90deg,#6366f1,#22d3ee);color:#fff}
+    /* Layout */
+    .wrap{max-width:1200px;margin:28px auto;padding:0 20px}
+    .title{font-size:28px;font-weight:800;letter-spacing:.2px;margin-bottom:6px}
+    .subtitle{color:var(--muted);margin-bottom:18px}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:22px}
+    .card{background:linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03));border:1px solid var(--line);border-radius:16px;padding:22px}
+    /* Template buttons */
+    .template-btn{margin:6px 10px 6px 0;padding:10px 14px;border-radius:12px;background:#0f2039;border:1px solid #20385f;color:#d7e1f0;font-weight:600;cursor:pointer}
+    .template-btn:hover{border-color:#2c4e86;background:#0d2443}
+    /* Field pills */
+    .field-card{display:inline-block;margin:6px 10px 6px 0;padding:10px 14px;border-radius:999px;background:#0f2039;border:1px solid #20385f;color:#d7e1f0;font-weight:600;cursor:pointer;transition:.2s}
+    .field-card.selected{background:linear-gradient(90deg,#6366f1,#22d3ee);border-color:transparent}
+    label{display:block;font-size:14px;color:#b1c0d6;margin:6px 0 8px}
+    .custom-field-row{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+    input[type="text"], select{padding:10px 12px;border-radius:10px;border:1px solid #213456;background:#0b172c;color:#e5edff}
+    .file-types{min-width:160px}
+    .add-custom-btn{background:linear-gradient(90deg,#22d3ee,#6366f1);color:white;border:none;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .remove-custom-btn{background:#ef4444;color:white;border:none;border-radius:10px;padding:8px 10px;font-weight:700;cursor:pointer}
+    .info-label{font-weight:700;color:#bcd1ff;margin:10px 0 6px}
+    .curl-box{background:#0b1220;border:1px dashed #23375b;border-radius:12px;padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;white-space:pre-wrap}
+    #formLink{display:inline-block;margin-top:12px;background:linear-gradient(90deg,#22d3ee,#6366f1);padding:12px 16px;border-radius:10px;color:white;font-weight:800}
+    @media (max-width:1000px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
-  <div class="logo"><span class="logo-icon"></span> Dynamic API Form Generator</div>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand"><span class="dot"></span>Dynamic API Form Generator</div>
+      <div class="links">
+        <a class="link" href="/">Home</a>
+        <a class="link" href="/match_upload">Resume Matcher</a>
+        <a class="link cta" href="/form-builder">Form Builder</a>
+        <a class="link" href="/match_results">Results</a>
+      </div>
+    </div>
+  </div>
 
-  <div class="template-buttons" id="templateButtons"></div>
+  <div class="wrap">
+    <div class="title">Build your form</div>
+    <div class="subtitle">Select fields, add custom inputs, and generate an API instantly.</div>
 
-  <div class="container">
-    <div class="left">
-      <form id="promptForm">
-        <label>Select the data fields you want to collect:</label>
-        <div id="fieldsContainer"></div>
+    <div id="templateButtons" style="margin-bottom:14px;"></div>
 
-        <div class="other-fields">
+    <div class="grid">
+      <div class="card">
+        <form id="promptForm">
+          <label>Select the data fields you want to collect:</label>
+          <div id="fieldsContainer"></div>
+
+          <div style="height:1px;background:#1e2d49;margin:16px 0"></div>
+
           <label>Other fields:</label>
           <div id="customFields"></div>
           <button type="button" class="add-custom-btn" onclick="addCustomField()">+ Add Custom Field</button>
-        </div>
-        <br>
-        <button type="submit" class="add-custom-btn" style="background:#00b894;">Generate API</button>
-      </form>
-    </div>
+          <br><br>
+          <button type="submit" class="add-custom-btn" style="background:linear-gradient(90deg,#10b981,#22d3ee)">Generate API</button>
+        </form>
+      </div>
 
-    <div class="right" id="apiInfo" style="display:none;">
-      <div class="api-label">Your API Endpoint</div>
-      <div id="endpointUrl"></div>
+      <div class="card" id="apiInfo" style="display:none">
+        <div class="info-label">Your API Endpoint</div>
+        <div id="endpointUrl" style="font-weight:800;color:#e5edff"></div>
 
-      <div class="api-label">cURL Example</div>
-      <div class="curl-box" id="curlExample"></div>
+        <div class="info-label">cURL Example</div>
+        <div class="curl-box" id="curlExample"></div>
 
-      <div class="api-label">Preview Form</div>
-      <a id="formLink" href="#" target="_blank">Open Form</a>
+        <div class="info-label">Preview Form</div>
+        <a id="formLink" href="#" target="_blank">Open Form</a>
+      </div>
     </div>
   </div>
 
@@ -228,9 +103,7 @@
         btn.className = 'field-card';
         btn.innerText = field.label;
         btn.dataset.name = field.name;
-        btn.onclick = function () {
-          btn.classList.toggle('selected');
-        };
+        btn.onclick = function () { btn.classList.toggle('selected'); };
         container.appendChild(btn);
       });
     }
@@ -261,7 +134,7 @@
           const row = document.createElement('div');
           row.className = 'custom-field-row';
           row.innerHTML = `
-            <input type="text" placeholder="Field name" class="custom-name" style="width:120px;" value="${tfield.name}" required>
+            <input type="text" placeholder="Field name" class="custom-name" style="width:140px;" value="${tfield.name}" required>
             <select class="custom-type">
               ${customFieldTypes.map(t => `<option value="${t.value}" ${t.value === tfield.data_type ? 'selected' : ''}>${t.label}</option>`).join('')}
             </select>
@@ -278,24 +151,18 @@
     }
 
     function addCustomField() {
-      const idx = Date.now() + Math.floor(Math.random() * 1000);
       const row = document.createElement('div');
       row.className = 'custom-field-row';
-      row.dataset.idx = idx;
       row.innerHTML = `
-        <input type="text" placeholder="Field name" class="custom-name" style="width:120px;" required>
-        <select class="custom-type">
-          ${customFieldTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('')}
-        </select>
-        <input type="text" class="file-types" placeholder="File types (pdf,doc)" style="display:none;" title="Comma separated extensions">
+        <input type="text" placeholder="Field name" class="custom-name" style="width:140px;" required>
+        <select class="custom-type"></select>
+        <input type="text" class="file-types" placeholder="File types (pdf,doc)" style="display:none" title="Comma separated extensions">
         <button type="button" class="remove-custom-btn">&times;</button>
       `;
-      row.querySelector('.custom-type').onchange = function () {
-        row.querySelector('.file-types').style.display = this.value === 'file' ? '' : 'none';
-      };
-      row.querySelector('.remove-custom-btn').onclick = function () {
-        row.remove();
-      };
+      const sel = row.querySelector('.custom-type');
+      sel.innerHTML = customFieldTypes.map(t => `<option value="${t.value}">${t.label}</option>`).join('');
+      sel.onchange = function(){ row.querySelector('.file-types').style.display = this.value === 'file' ? '' : 'none'; }
+      row.querySelector('.remove-custom-btn').onclick = () => row.remove();
       document.getElementById('customFields').appendChild(row);
     }
 
@@ -329,9 +196,9 @@
       document.getElementById('endpointUrl').innerText = window.location.origin + url;
       let curlFields = '';
       if (data.fields && Array.isArray(data.fields)) {
-        curlFields = data.fields.map(f => `  -F \"${f.name}=your_value\" \\\n`).join('');
+        curlFields = data.fields.map(f => `  -F "${f.name}=your_value" \\\n`).join('');
       }
-      document.getElementById('curlExample').innerText = `curl -X POST \\\n${curlFields}  \"${window.location.origin}${url}\"`;
+      document.getElementById('curlExample').innerText = `curl -X POST \\\n${curlFields}"${window.location.origin}${url}"`;
       document.getElementById('formLink').href = url;
       document.getElementById('formLink').innerText = 'Open Form';
       document.getElementById('apiInfo').style.display = '';

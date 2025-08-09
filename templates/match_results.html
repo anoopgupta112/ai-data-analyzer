@@ -2,135 +2,71 @@
 <html>
 <head>
   <title>Resume Match Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f7fa;
-      padding: 30px;
-      color: #2c3e50;
-    }
-    h1 {
-      color: #506fff;
-      margin-bottom: 24px;
-    }
-    .controls {
-      margin-bottom: 20px;
-    }
-    .controls input, .controls select {
-      padding: 6px 10px;
-      margin-right: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .result-card {
-      background: white;
-      padding: 24px 24px 18px 24px;
-      border-radius: 14px;
-      box-shadow: 0 4px 16px #506fff22;
-      margin-bottom: 24px;
-      transition: box-shadow 0.2s;
-      position: relative;
-    }
-    .result-card:hover {
-      box-shadow: 0 8px 32px #506fff33;
-    }
-    .result-card h3 {
-      margin-top: 0;
-      color: #273c75;
-      font-size: 1.2rem;
-      margin-bottom: 6px;
-    }
-    .resume-id {
-      font-size: 0.98rem;
-      color: #506fff;
-      font-weight: 600;
-      margin-bottom: 10px;
-      letter-spacing: 0.5px;
-    }
-    .tag {
-      display: inline-block;
-      background: #506fff;
-      color: white;
-      padding: 4px 8px;
-      font-size: 0.8rem;
-      border-radius: 6px;
-      margin-left: 6px;
-    }
-    .collapsible {
-      background: #f1f6ff;
-      color: #273c75;
-      cursor: pointer;
-      padding: 10px 16px;
-      width: 100%;
-      border: none;
-      text-align: left;
-      outline: none;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      margin-top: 10px;
-      margin-bottom: 0;
-      transition: background 0.2s;
-    }
-    .collapsible.active, .collapsible:hover {
-      background: #506fff;
-      color: white;
-    }
-    .content {
-      padding: 0 18px 10px 18px;
-      display: none;
-      overflow: hidden;
-      background: #f8f9fa;
-      border-radius: 0 0 8px 8px;
-      margin-bottom: 8px;
-      margin-top: 0;
-    }
-    .section-label {
-      font-weight: 600;
-      color: #506fff;
-      margin-bottom: 4px;
-      margin-top: 8px;
-      font-size: 1.01rem;
-    }
-    .download-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #fff;
-      background: linear-gradient(90deg, #27ae60 0%, #506fff 100%);
-      padding: 8px 18px;
-      border-radius: 6px;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 2px 8px #506fff33;
-      transition: background 0.2s, transform 0.1s;
-      font-size: 0.98rem;
-    }
-    .download-link:hover {
-      background: linear-gradient(90deg, #506fff 0%, #27ae60 100%);
-      transform: translateY(-2px) scale(1.04);
-    }
-    .github-analysis {
-      margin-top: 10px;
-    }
+    :root{--bg:#0b1220;--panel:#0f172a;--muted:#9fb0c5;--line:#1e2d49;--acc:#6366f1;--acc2:#22d3ee}
+    *{box-sizing:border-box} html,body{margin:0;background:#0b1220;color:#e2e8f0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .nav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(2,6,23,.85),rgba(2,6,23,.5));backdrop-filter:blur(8px);border-bottom:1px solid #11213a}
+    .nav-inner{max-width:1150px;margin:0 auto;display:flex;align-items:center;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .dot{width:26px;height:26px;border-radius:8px;background:conic-gradient(from 140deg,#6366f1,#22d3ee,#38bdf8,#6366f1)}
+    .links{margin-left:auto;display:flex;gap:12px}
+    .link{padding:8px 12px;border-radius:10px;color:#cbd5e1;border:1px solid transparent}
+    .link:hover{border-color:#2a3f63;background:#0c1e37}
+
+    .wrap{max-width:1150px;margin:28px auto;padding:0 20px}
+    h1{margin:0 0 12px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+    .controls input{padding:10px 12px;border-radius:10px;border:1px solid #213456;background:#0b172c;color:#e5edff}
+    .btn{padding:10px 12px;border-radius:10px;border:1px solid #213456;background:#0f2039;color:#cfe4ff;font-weight:700;cursor:pointer}
+    .btn:hover{background:#0d2443;border-color:#2c4e86}
+
+    .info{margin-bottom:18px;background:#0b1527;border:1px solid #1b2b48;padding:16px;border-radius:12px}
+    .result-card{background:linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03));border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+    .resume-id{font-size:13px;color:#9fb0c5;margin-bottom:4px}
+    .result-card h3{margin:0 0 6px}
+    .tag{display:inline-block;margin-left:8px;padding:4px 8px;border-radius:999px;background:linear-gradient(90deg,#10b981,#22d3ee);color:#021523;font-weight:900;font-size:12px}
+    .collapsible{width:100%;text-align:left;margin-top:10px;padding:10px 12px;border:none;border-radius:10px;background:#0e1a2d;border:1px solid #223a61;color:#cfe4ff;font-weight:700;cursor:pointer}
+    .collapsible.active,.collapsible:hover{background:#0d2443;border-color:#2c4e86}
+    .content{display:none;padding:10px 12px;background:#0b1526;border-radius:10px;margin-top:6px}
+    .download-link{display:inline-block;margin-top:10px;color:#00131f;background:linear-gradient(90deg,#10b981,#22d3ee);padding:8px 12px;border-radius:10px;font-weight:800;text-decoration:none}
   </style>
 </head>
 <body>
-  <h1>Resume Match Results</h1>
-  <div class="controls">
-    <label>Filter by Match %:</label>
-    <input type="number" id="minMatch" placeholder="Min %" />
-    <input type="number" id="maxMatch" placeholder="Max %" />
-    <button onclick="applyFilter()">Apply Filter</button>
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand"><span class="dot"></span>Match Results</div>
+      <div class="links">
+        <a class="link" href="/">Home</a>
+        <a class="link" href="/match_upload">Matcher</a>
+        <a class="link" href="/form-builder">Form Builder</a>
+        <a class="link" href="/github_questions">GitHub Q&A</a>
+      </div>
+    </div>
   </div>
-  <div id="githubLinksSection" style="margin-bottom:24px; background:#f8f9fa; padding:16px; border-radius:10px; border:1px solid #e1e8ed;">
-    <b>All GitHub Repository Links Found:</b>
-    <div id="allGithubLinks" style="margin-top:8px;"></div>
+
+  <div class="wrap">
+    <h1>Resume Match Results</h1>
+
+    <div class="controls">
+      <label>Filter by Match %:</label>
+      <input type="number" id="minMatch" placeholder="Min %" />
+      <input type="number" id="maxMatch" placeholder="Max %" />
+      <button class="btn" onclick="applyFilter()">Apply Filter</button>
+    </div>
+
+    <div id="githubLinksSection" class="info">
+      <b>All GitHub Repository Links Found:</b>
+      <div id="allGithubLinks" style="margin-top:8px;"></div>
+    </div>
+
+    <div class="controls" style="margin-bottom:22px">
+      <button class="btn" onclick="showAllGithubQuestions()">Show All GitHub Questions</button>
+      <button class="btn" onclick="downloadAllCSVs()">Download All CSVs</button>
+    </div>
+
+    <div id="resultsContainer"></div>
   </div>
-  <div class="controls" style="margin-bottom:32px; background:#f1f6ff; padding:18px; border-radius:10px;">
-    <button onclick="showAllGithubQuestions()" style="background:#506fff;color:white;padding:10px 22px;border:none;border-radius:8px;font-size:1rem;">Show All GitHub Questions</button>
-    <button onclick="downloadAllCSVs()" style="background:#27ae60;color:white;padding:10px 22px;border:none;border-radius:8px;font-size:1rem;margin-left:12px;">Download All CSVs</button>
-  </div>
-  <div id="resultsContainer"></div>
 
   <script>
     const rawData = JSON.parse(localStorage.getItem('matchResults'))?.matches || [];
@@ -141,11 +77,8 @@
       container.innerHTML = '';
       data.forEach((r, idx) => {
         let obj;
-        try {
-          obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
-        } catch (e) {
-          obj = { percent_match: 0, description: 'Invalid JSON', positive: '', negative: '' };
-        }
+        try { obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report; }
+        catch { obj = { percent_match: 0, description: 'Invalid JSON', positive: '', negative: '' }; }
 
         const div = document.createElement('div');
         div.className = 'result-card';
@@ -162,52 +95,36 @@
         `;
         container.appendChild(div);
       });
-      // Add collapsible logic
       const collapsibles = container.querySelectorAll('.collapsible');
       collapsibles.forEach(btn => {
         btn.addEventListener('click', function() {
           this.classList.toggle('active');
           const content = this.nextElementSibling;
-          if (content.style.display === 'block') {
-            content.style.display = 'none';
-          } else {
-            content.style.display = 'block';
-          }
+          content.style.display = content.style.display === 'block' ? 'none' : 'block';
         });
       });
     }
 
     function renderNested(value) {
       if (Array.isArray(value)) {
-        return '<ul>' + value.map(item => {
-          if (typeof item === 'string') {
-            return `<li>${item}</li>`;
-          } else if (typeof item === 'object') {
-            return `<li>${Object.entries(item).map(([k,v]) => `
-              <div class='nested'><strong>${k}:</strong> ${Array.isArray(v) ? v.join(', ') : v}</div>`).join('')}</li>`;
-          } else {
-            return `<li>${JSON.stringify(item)}</li>`;
-          }
+        return '<ul style="margin:0;padding-left:18px">' + value.map(item => {
+          if (typeof item === 'string') return `<li>${item}</li>`;
+          else if (typeof item === 'object')
+            return `<li>${Object.entries(item).map(([k,v]) => `<div class='nested'><strong>${k}:</strong> ${Array.isArray(v)? v.join(', '): v}</div>`).join('')}</li>`;
+          else return `<li>${JSON.stringify(item)}</li>`;
         }).join('') + '</ul>';
       } else {
-        return `<div class='nested'>${value}</div>`;
+        return `<div class='nested'>${value || ''}</div>`;
       }
     }
 
     function applyFilter() {
       const min = parseInt(document.getElementById('minMatch').value) || 0;
       const max = parseInt(document.getElementById('maxMatch').value) || 100;
-
       filtered = rawData.filter(r => {
-        try {
-          const obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report;
-          const val = parseInt(obj.percent_match);
-          return val >= min && val <= max;
-        } catch {
-          return false;
-        }
+        try { const val = parseInt((typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report).percent_match); return val >= min && val <= max; }
+        catch { return false; }
       });
-
       render(filtered);
     }
 
@@ -216,7 +133,7 @@
         const analysisDiv = document.getElementById(`githubAnalysis_${idx}`);
         if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
           let html = '';
-          r.github_questions.forEach((qset, qidx) => {
+          r.github_questions.forEach((qset) => {
             html += `<button class='collapsible' style='margin-top:10px;'>Repo: <a href='${qset.repo}' target='_blank'>${qset.repo}</a></button>`;
             html += `<div class='content'>`;
             if (qset.summary) {
@@ -225,24 +142,13 @@
             }
             if (qset.questions && qset.questions.length) {
               html += `<button class='collapsible' style='margin-top:6px;'>Questions</button>`;
-              html += `<div class='content'><ul style='margin:8px 0 0 0;'>` + qset.questions.map(q => `<li>${q}</li>`).join('') + '</ul></div>';
+              html += `<div class='content'><ul style='margin:8px 0 0 0;padding-left:18px;'>` + qset.questions.map(q => `<li>${q}</li>`).join('') + '</ul></div>';
             }
             html += `</div>`;
           });
           analysisDiv.innerHTML = html;
-          // Add collapsible logic for inner repo blocks
-          const innerCollapsibles = analysisDiv.querySelectorAll('.collapsible');
-          innerCollapsibles.forEach(btn => {
-            btn.addEventListener('click', function() {
-              this.classList.toggle('active');
-              const content = this.nextElementSibling;
-              if (content.style.display === 'block') {
-                content.style.display = 'none';
-              } else {
-                content.style.display = 'block';
-              }
-            });
-          });
+          const inner = analysisDiv.querySelectorAll('.collapsible');
+          inner.forEach(btn => btn.addEventListener('click', function(){ this.classList.toggle('active'); const c = this.nextElementSibling; c.style.display = c.style.display === 'block' ? 'none' : 'block'; }));
         } else {
           analysisDiv.innerHTML = '<i>No GitHub questions found for this PDF.</i>';
         }
@@ -250,30 +156,21 @@
     }
 
     function downloadAllCSVs() {
-      rawData.forEach((r, idx) => {
+      rawData.forEach((r) => {
         if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
           let csvContent = 'Repo,Summary,Question\n';
           r.github_questions.forEach(qset => {
             const repo = qset.repo ? '"' + qset.repo.replace(/"/g, '""') + '"' : '';
             const summary = qset.summary ? '"' + qset.summary.replace(/"/g, '""') + '"' : '';
             if (qset.questions && qset.questions.length) {
-              qset.questions.forEach(q => {
-                csvContent += `${repo},${summary},"${q.replace(/"/g, '""')}"\n`;
-              });
-            } else {
-              csvContent += `${repo},${summary},\n`;
-            }
+              qset.questions.forEach(q => { csvContent += `${repo},${summary},"${q.replace(/"/g, '""')}"\n`; });
+            } else { csvContent += `${repo},${summary},\n`; }
           });
-          // Create CSV blob and download link
           const blob = new Blob([csvContent], { type: 'text/csv' });
           const url = URL.createObjectURL(blob);
-          // Create a temporary link and trigger download
           const a = document.createElement('a');
-          a.href = url;
-          a.download = `${r.pdf_path.replace(/\.[^/.]+$/, "")}_github_questions_${r.pdf_path}.csv`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
+          a.href = url; a.download = `${r.pdf_path.replace(/\.[^/.]+$/, "")}_github_questions_${r.pdf_path}.csv`;
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
       });
     }
@@ -291,11 +188,7 @@
       });
       const uniqueUrls = Array.from(new Set(urls));
       const container = document.getElementById('allGithubLinks');
-      if (uniqueUrls.length === 0) {
-        container.innerHTML = '<i>No GitHub repository links found.</i>';
-      } else {
-        container.innerHTML = uniqueUrls.map(url => `<a href='${url}' target='_blank' style='margin-right:12px;'>${url}</a>`).join('<br>');
-      }
+      container.innerHTML = uniqueUrls.length ? uniqueUrls.map(url => `<a href='${url}' target='_blank' style='margin-right:12px;'>${url}</a>`).join('<br>') : '<i>No GitHub repository links found.</i>';
     }
 
     render(rawData);

@@ -1,128 +1,93 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DataExtractor Landing</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(120deg, #e0e7ff 0%, #f8fafc 100%);
-            position: relative;
-            overflow-x: hidden;
-        }
-        .animated-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
-            background: radial-gradient(circle at 80% 20%, #506fff22 0%, transparent 60%),
-                        radial-gradient(circle at 20% 80%, #81ecec22 0%, transparent 60%);
-            pointer-events: none;
-        }
-        .landing-container {
-            max-width: 1100px;
-            margin: 80px auto 0 auto;
-            display: flex;
-            gap: 48px;
-            justify-content: center;
-            z-index: 1;
-            position: relative;
-        }
-        .landing-section {
-            background: rgba(255,255,255,0.98);
-            border-radius: 22px;
-            box-shadow: 0 8px 32px 0 rgba(80,111,255,0.10), 0 1.5px 8px 0 rgba(80,111,255,0.08);
-            padding: 56px 44px 44px 44px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: box-shadow 0.2s, transform 0.2s;
-            min-width: 320px;
-        }
-        .landing-section:hover {
-            box-shadow: 0 16px 48px 0 #506fff33, 0 2px 12px 0 #506fff22;
-            transform: translateY(-4px) scale(1.025);
-        }
-        .landing-title {
-            color: #506fff;
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 22px;
-            text-align: center;
-            letter-spacing: 0.5px;
-            text-shadow: 0 2px 12px #506fff18;
-        }
-        .landing-desc {
-            color: #2c3e50;
-            font-size: 1.18rem;
-            margin-bottom: 38px;
-            text-align: center;
-            line-height: 1.6;
-        }
-        .landing-btn {
-            background: linear-gradient(90deg, #506fff 0%, #81ecec 100%);
-            color: #fff;
-            border: none;
-            padding: 18px 44px;
-            border-radius: 12px;
-            font-size: 1.18rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 18px #506fff33;
-            transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
-            letter-spacing: 0.5px;
-        }
-        .landing-btn:hover {
-            background: linear-gradient(90deg, #81ecec 0%, #506fff 100%);
-            transform: translateY(-2px) scale(1.04);
-            box-shadow: 0 8px 32px #506fff33;
-        }
-        @media (max-width: 1100px) {
-            .landing-container {
-                flex-direction: column;
-                gap: 32px;
-                padding: 0 16px;
-            }
-        }
-        @media (max-width: 600px) {
-            .landing-section {
-                padding: 32px 12px 28px 12px;
-                min-width: unset;
-            }
-            .landing-title {
-                font-size: 1.3rem;
-            }
-            .landing-desc {
-                font-size: 1rem;
-            }
-            .landing-btn {
-                font-size: 1rem;
-                padding: 14px 18px;
-            }
-        }
-    </style>
+  <title>DataExtractor • Landing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1220; --card:#0f172a; --muted:#94a3b8; --acc:#6366f1; --acc2:#22d3ee; --ring:#1e293b;
+      --glass:rgba(255,255,255,0.06);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(1200px 600px at 10% -10%,#1f2a48 0%,transparent 60%),radial-gradient(1000px 600px at 110% 10%,#0ea5e9 0%,transparent 50%),linear-gradient(180deg,#0b1220 0%,#0b1220 100%);color:#e2e8f0}
+    a{text-decoration:none;color:inherit}
+    /* Top Nav */
+    .nav{position:sticky;top:0;z-index:50;backdrop-filter:saturate(160%) blur(10px);background:linear-gradient(180deg,rgba(2,6,23,.8),rgba(2,6,23,.45));border-bottom:1px solid #0f233b}
+    .nav-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:18px;padding:16px 20px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.2px}
+    .logo-badge{width:34px;height:34px;border-radius:9px;background:conic-gradient(from 140deg,#6366f1,#22d3ee,#38bdf8,#6366f1);box-shadow:0 0 0 2px #0b1220,0 6px 28px rgba(34,211,238,.35)}
+    .nav-links{margin-left:auto;display:flex;gap:14px}
+    .nav-link{padding:10px 12px;border-radius:10px;color:#cbd5e1;border:1px solid transparent}
+    .nav-link:hover{border-color:#1f365b;background:#0b1b34}
+    .cta{background:linear-gradient(90deg,#6366f1,#22d3ee);color:white;border:none}
+    /* Hero */
+    .hero{max-width:1200px;margin:42px auto;padding:0 20px;display:grid;grid-template-columns:1.1fr .9fr;gap:28px}
+    .headline{font-size:44px;line-height:1.05;margin:8px 0 14px;font-weight:800;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:18px;max-width:720px}
+    .cards{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:24px}
+    .card{background:linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03));border:1px solid #1f2a3a;border-radius:18px;padding:26px;box-shadow:0 10px 40px rgba(15,23,42,.35) inset, 0 8px 28px rgba(2,6,23,.4)}
+    .card h3{margin:0 0 8px;font-size:18px}
+    .card p{margin:0;color:#9fb0c5;font-size:14px}
+    .go{margin-top:18px;display:inline-flex;align-items:center;gap:10px;padding:12px 14px;border-radius:10px;border:1px solid #20314d;background:#0e1a2e;color:#e5edff}
+    .go:hover{border-color:#2a4572;background:#0c223f}
+    /* Feature Art */
+    .art{background:radial-gradient(600px 280px at 80% -10%,rgba(99,102,241,.5),transparent 60%),linear-gradient(180deg,rgba(14,23,40,.7),rgba(14,23,40,.4));border:1px solid #1e2d49;border-radius:22px;padding:26px;min-height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .grid{position:absolute;inset:0;background-image:linear-gradient(#18243b 1px,transparent 1px),linear-gradient(90deg,#18243b 1px,transparent 1px);background-size:44px 44px;opacity:.35}
+    .blip{position:absolute;width:140px;height:140px;border-radius:50%;filter:blur(22px);background:radial-gradient(circle,#22d3ee55,transparent 60%);top:22%;left:10%}
+    .blip2{position:absolute;width:160px;height:160px;border-radius:50%;filter:blur(24px);background:radial-gradient(circle,#6366f155,transparent 60%);bottom:10%;right:12%}
+    .panel{width:88%;max-width:560px;border-radius:16px;border:1px solid #22324e;background:linear-gradient(180deg,#0c172a,#0b1220);padding:18px}
+    .panel-row{display:flex;gap:10px}
+    .pill{flex:1;padding:12px;border-radius:12px;background:#0f1e36;border:1px solid #213456}
+    .pill b{display:block;margin-bottom:4px}
+    @media (max-width:1000px){.hero{grid-template-columns:1fr}.cards{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-    <div class="animated-bg"></div>
-    <div class="landing-container">
-        <div class="landing-section">
-            <div class="landing-title">Match Resume with Folder</div>
-            <div class="landing-desc">
-                Upload a folder of resumes and a job description to find the best matches instantly.
-            </div>
-            <button class="landing-btn" onclick="window.location.href='/match_upload'">Go to Resume Matcher</button>
-        </div>
-        <div class="landing-section">
-            <div class="landing-title">Create Form</div>
-            <div class="landing-desc">
-                Build a custom data collection form for resumes and analyze submissions later.
-            </div>
-            <button class="landing-btn" onclick="window.location.href='/form-builder'">Go to Form Builder</button>
-        </div>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="logo"><span class="logo-badge"></span>DataExtractor</div>
+      <div class="nav-links">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/match_upload">Resume Matcher</a>
+        <a class="nav-link" href="/form-builder">Form Builder</a>
+        <a class="nav-link" href="/match_results">Results</a>
+<!--        <a class="nav-link cta" href="/github_questions">GitHub Q&A</a>-->
+      </div>
     </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div>
+      <div class="headline">Fast resume matching & custom forms—beautifully simple.</div>
+      <div class="sub">Upload a folder of resumes and a JD to get instant, explainable matches. Or generate a custom form and analyze every PDF later—same workspace, unified UI.</div>
+      <div class="cards">
+        <div class="card">
+          <h3>Match Resume with Folder</h3>
+          <p>Find top candidates with transparent scoring and GitHub insights.</p>
+          <a class="go" href="/match_upload">Open Resume Matcher →</a>
+        </div>
+        <div class="card">
+          <h3>Create Form</h3>
+          <p>Spin up an API-backed form, then analyze submissions as a batch.</p>
+          <a class="go" href="/form-builder">Open Form Builder →</a>
+        </div>
+      </div>
+    </div>
+    <div class="art">
+      <div class="grid"></div><div class="blip"></div><div class="blip2"></div>
+      <div class="panel">
+        <div class="panel-row">
+          <div class="pill"><b>Speed</b><span style="color:#93a7c3">Batch analyze PDFs in one click.</span></div>
+          <div class="pill"><b>Clarity</b><span style="color:#93a7c3">Positive & negative evidence.</span></div>
+        </div>
+        <div class="panel-row" style="margin-top:10px">
+          <div class="pill"><b>Dev Signals</b><span style="color:#93a7c3">Pull GitHub repos & questions.</span></div>
+          <div class="pill"><b>APIs</b><span style="color:#93a7c3">Auto cURL & endpoints.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
 </body>
-</html> 
+</html>

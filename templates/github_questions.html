@@ -2,24 +2,46 @@
 <html>
 <head>
   <title>GitHub Code Questions</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f5f7fa; padding: 30px; color: #2c3e50; }
-    .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 14px; box-shadow: 0 4px 20px #506fff22; padding: 36px; }
-    h1 { color: #506fff; margin-bottom: 18px; }
-    .summary { background: #f1f6ff; border-left: 5px solid #506fff; padding: 18px; border-radius: 8px; margin-bottom: 28px; font-size: 1.1rem; }
-    .questions { margin-bottom: 24px; }
-    .question-card { background: #e8f9f1; border-left: 4px solid #2ecc71; padding: 16px; border-radius: 8px; margin-bottom: 14px; font-size: 1.08rem; }
-    .back-btn { background: #506fff; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; margin-top: 18px; }
-    .back-btn:hover { background: #273c75; }
+    :root{--bg:#0b1220;--panel:#0f172a;--muted:#9fb0c5;--line:#1e2d49;--acc:#6366f1;--acc2:#22d3ee}
+    *{box-sizing:border-box} html,body{margin:0;background:#0b1220;color:#e2e8f0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .nav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(2,6,23,.85),rgba(2,6,23,.5));backdrop-filter:blur(8px);border-bottom:1px solid #11213a}
+    .nav-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;padding:14px 20px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
+    .dot{width:26px;height:26px;border-radius:8px;background:conic-gradient(from 140deg,#6366f1,#22d3ee,#38bdf8,#6366f1)}
+    .links{margin-left:auto;display:flex;gap:12px}
+    .link{padding:8px 12px;border-radius:10px;color:#cbd5e1;border:1px solid transparent}
+    .link:hover{border-color:#2a3f63;background:#0c1e37}
+
+    .container{max-width:900px;margin:28px auto;padding:0 20px}
+    .card{background:linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03));border:1px solid var(--line);border-radius:18px;padding:24px}
+    h1{margin:0 0 10px}
+    .summary{background:#0b1527;border:1px solid #1b2b48;padding:16px;border-radius:12px;margin-bottom:18px;font-size:1.03rem}
+    .question-card{background:#0e1a2d;border:1px solid #223a61;padding:14px;border-radius:12px;margin-bottom:10px}
+    .back-btn{background:linear-gradient(90deg,#6366f1,#22d3ee);color:white;border:none;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer;margin-top:12px}
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>GitHub Code Questions</h1>
-    <div class="summary" id="summaryBox"></div>
-    <div class="questions" id="questionsBox"></div>
-    <button class="back-btn" onclick="window.location.href='/match_results'">Back</button>
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="brand"><span class="dot"></span>GitHub Questions</div>
+      <div class="links">
+        <a class="link" href="/">Home</a>
+        <a class="link" href="/match_results">Results</a>
+      </div>
+    </div>
   </div>
+
+  <div class="container">
+    <div class="card">
+      <h1>GitHub Code Questions</h1>
+      <div class="summary" id="summaryBox"></div>
+      <div class="questions" id="questionsBox"></div>
+      <button class="back-btn" onclick="window.location.href='/match_results'">Back</button>
+    </div>
+  </div>
+
   <script>
     const data = JSON.parse(localStorage.getItem('githubQuestions')) || {questions:[], summary:''};
     document.getElementById('summaryBox').textContent = data.summary || 'No summary.';
@@ -36,4 +58,4 @@
     }
   </script>
 </body>
-</html> 
+</html>
