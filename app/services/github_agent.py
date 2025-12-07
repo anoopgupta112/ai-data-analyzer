@@ -1,23 +1,30 @@
-import requests
+import json
 import os
+import re
+from typing import Dict, List
+
+import requests
 from dotenv import load_dotenv
-import google.generativeai as genai
-from typing import List, Dict
+
+from app.services.openrouter_client import OpenRouterError, complete_chat
 
 load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Optional: for higher rate limits
 
-genai.configure(api_key=GEMINI_API_KEY)
-
 GITHUB_API = "https://api.github.com"
+
+
+def _complete_prompt(prompt: str) -> str:
+    try:
+        return complete_chat(prompt)
+    except OpenRouterError as exc:
+        raise ValueError(f"OpenRouter request failed: {exc}") from exc
 
 
 def fetch_github_code(url: str, max_lines: int = 200) -> str:
     """
     Fetch up to max_lines of code from a GitHub repo (public, or with token).
     """
-    import re
     m = re.match(r"https://github.com/([^/]+)/([^/]+)(/|$)", url)
     if not m:
         return ""
@@ -74,11 +81,9 @@ CODE:
 {code_text}
 ---
 """
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    response = model.generate_content(prompt)
-    import re, json
+    response_text = _complete_prompt(prompt)
     try:
-        json_str = re.search(r'\{[\s\S]*\}', response.text).group(0)
+        json_str = re.search(r'\{[\s\S]*\}', response_text).group(0)
         data = json.loads(json_str)
         return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
     except Exception as e:
@@ -103,11 +108,9 @@ Job Description:
 {jd}
 ---
 """
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    response = model.generate_content(prompt)
-    import re, json
+    response_text = _complete_prompt(prompt)
     try:
-        json_str = re.search(r'\{[\s\S]*\}', response.text).group(0)
+        json_str = re.search(r'\{[\s\S]*\}', response_text).group(0)
         data = json.loads(json_str)
         return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
     except Exception as e:
@@ -128,9 +131,8 @@ Resume Text:
 ---
 """
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        response = model.generate_content(prompt)
-        extracted = response.text.strip()
+        response_text = _complete_prompt(prompt)
+        extracted = response_text.strip()
         print(f"[DEBUG] Extracted experience length: {len(extracted)}")
         
         if not extracted:
@@ -166,11 +168,9 @@ Experience Section:
 {experience_text}
 ---
 """
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    response = model.generate_content(prompt)
-    import re, json
+    response_text = _complete_prompt(prompt)
     try:
-        json_str = re.search(r'\{[\s\S]*\}', response.text).group(0)
+        json_str = re.search(r'\{[\s\S]*\}', response_text).group(0)
         data = json.loads(json_str)
         print(f"[DEBUG] Generated {len(data.get('questions', []))} questions.")
         return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
@@ -193,9 +193,8 @@ Resume Text:
 ---
 """
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        response = model.generate_content(prompt)
-        extracted = response.text.strip()
+        response_text = _complete_prompt(prompt)
+        extracted = response_text.strip()
         print(f"[DEBUG] Extracted projects length: {len(extracted)}")
         return extracted
     except Exception as e:
@@ -228,11 +227,9 @@ Projects Section:
 {project_text}
 ---
 """
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    response = model.generate_content(prompt)
-    import re, json
+    response_text = _complete_prompt(prompt)
     try:
-        json_str = re.search(r'\[[\s\S]*\]', response.text).group(0)
+        json_str = re.search(r'\[[\s\S]*\]', response_text).group(0)
         data = json.loads(json_str)
         print(f"[DEBUG] Generated questions for {len(data)} projects.")
         return data

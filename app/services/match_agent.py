@@ -1,17 +1,14 @@
 # match_agent.py
 
-import os
-from dotenv import load_dotenv
-import google.generativeai as genai
-
 import json
 import re
 from typing import Dict, Any
 
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+from dotenv import load_dotenv
 
-genai.configure(api_key=GEMINI_API_KEY)
+from app.services.openrouter_client import OpenRouterError, complete_chat
+
+load_dotenv()
 
 def evaluate_resume_against_jd(jd: str, resume_text: str):
     prompt = f"""
@@ -42,10 +39,12 @@ Job Description:
 Resume Text:
 {resume_text}
 """
-    model = genai.GenerativeModel('gemini-2.0-flash')
-    response = model.generate_content(prompt)
-    print(response.text)
-    data = extract_json_from_text(response.text)
+    try:
+        response_text = complete_chat(prompt)
+    except OpenRouterError as exc:
+        raise ValueError(f"OpenRouter request failed: {exc}") from exc
+    print(response_text)
+    data = extract_json_from_text(response_text)
     return data
 
 
