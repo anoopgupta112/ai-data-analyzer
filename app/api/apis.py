@@ -190,15 +190,57 @@ def get_router(templates: Jinja2Templates):
             github_questions = []
             if links:
                 import re
-                github_links = [l['uri'] for l in links if isinstance(l, dict) and 'uri' in l and re.match(r'https://github.com/[^/]+/[^/]+', l['uri'])]
+                github_links = [l['uri'] for l in links if isinstance(l, dict) and 'uri' in l and re.match(r'https://github.com/', l['uri'])]
                 unique_repos = list(set(github_links))
                 for gh_url in unique_repos:
                     qdata = generate_questions_from_github([gh_url], 10)
+                    if qdata.get('summary') == 'No code found.':
+                        continue
                     github_questions.append({
                         'repo': gh_url,
                         'questions': qdata.get('questions', []),
-                        'summary': qdata.get('summary', '')
+                        'summary': qdata.get('summary', ''),
+                        'source': 'github'
                     })
+            
+            # Fallback: JD Questions (if no GitHub links found)
+            if not github_questions:
+                from app.services.github_agent import generate_questions_from_jd
+                jd_qdata = generate_questions_from_jd(jd, 10)
+                if jd_qdata.get('questions'):
+                    github_questions.append({
+                        'repo': 'Job Description',
+                        'questions': jd_qdata.get('questions', []),
+                        'summary': jd_qdata.get('summary', ''),
+                        'source': 'jd'
+                    })
+
+            # Experience Questions (always try to extract)
+            from app.services.github_agent import extract_experience_section, generate_questions_from_experience
+            experience_text = extract_experience_section(resume_text)
+            if experience_text:
+                exp_qdata = generate_questions_from_experience(experience_text, 5)
+                if exp_qdata.get('questions'):
+                    github_questions.append({
+                        'repo': 'Experience',
+                        'questions': exp_qdata.get('questions', []),
+                        'summary': exp_qdata.get('summary', ''),
+                        'source': 'experience'
+                    })
+
+            # Project Questions (Resume Projects)
+            from app.services.github_agent import extract_project_section, generate_questions_from_projects
+            project_text = extract_project_section(resume_text)
+            if project_text:
+                projects_data = generate_questions_from_projects(project_text)
+                for p in projects_data:
+                    github_questions.append({
+                        'repo': p.get('project_name', 'Project'),
+                        'questions': p.get('questions', []),
+                        'summary': p.get('summary', ''),
+                        'source': 'project'
+                    })
+
             results.append({
                 "pdf_path": os.path.basename(abs_pdf_path),
                 "match_report": match_report,

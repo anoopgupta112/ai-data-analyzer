@@ -82,4 +82,160 @@ CODE:
         data = json.loads(json_str)
         return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
     except Exception as e:
-        return {"questions": [], "summary": f"Error: {e}"} 
+        return {"questions": [], "summary": f"Error: {e}"}
+
+def generate_questions_from_jd(jd: str, num_questions: int = 10) -> Dict:
+    """
+    Generate questions based on the Job Description when no GitHub links are found.
+    """
+    prompt = f"""
+You are a technical interviewer. Read the following Job Description.
+Generate {num_questions} insightful technical basic questions based on the requirements and skills mentioned in the JD.
+Make the questions general (e.g., "When would you use a microservices architecture?" instead of "Why did you use microservices in this project?").
+Also provide a short summary of the key technical requirements from the JD.
+
+Respond ONLY with a JSON object with keys:
+- questions: array of strings
+- summary: string
+
+---
+Job Description:
+{jd}
+---
+"""
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    response = model.generate_content(prompt)
+    import re, json
+    try:
+        json_str = re.search(r'\{[\s\S]*\}', response.text).group(0)
+        data = json.loads(json_str)
+        return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
+    except Exception as e:
+        return {"questions": [], "summary": f"Error: {e}"}
+
+def extract_experience_section(resume_text: str) -> str:
+    """
+    Extract the 'Experience' or 'Work History' section from the resume text using LLM.
+    """
+    print(f"[DEBUG] Extracting experience from {len(resume_text)} chars...")
+    prompt = f"""
+You are a resume parser. Extract the "Experience" or "Work History" section from the following resume text.
+Return ONLY the text content of that section. If not found, return an empty string.
+
+---
+Resume Text:
+{resume_text}
+---
+"""
+    try:
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        response = model.generate_content(prompt)
+        extracted = response.text.strip()
+        print(f"[DEBUG] Extracted experience length: {len(extracted)}")
+        
+        if not extracted:
+            print("[DEBUG] Experience section not found. Using full resume text as fallback.")
+            return resume_text[-2000:] # Fallback to last 2000 chars as a heuristic or just return all
+            
+        return extracted
+    except Exception as e:
+        print(f"[ERROR] extract_experience_section failed: {e}")
+        return ""
+
+def generate_questions_from_experience(experience_text: str, num_questions: int = 5) -> Dict:
+    """
+    Generate questions based on the candidate's experience.
+    """
+    if not experience_text:
+        return {"questions": [], "summary": ""}
+        
+    print(f"[DEBUG] Generating questions from experience text ({len(experience_text)} chars)...")
+    prompt = f"""
+You are a technical interviewer. Read the following Experience section from a candidate's resume.
+Generate {num_questions} insightful technical questions based on the projects and roles described.
+Focus on the technologies and challenges mentioned.
+Make the questions specific to their experience but framed as technical inquiries (e.g., "You mentioned working with Kafka. How did you handle message ordering?").
+Also provide a short summary of their key experience highlights.
+
+Respond ONLY with a JSON object with keys:
+- questions: array of strings (questions should be easy to answer - just a basic level of questions in simple words)
+- summary: string
+
+---
+Experience Section:
+{experience_text}
+---
+"""
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    response = model.generate_content(prompt)
+    import re, json
+    try:
+        json_str = re.search(r'\{[\s\S]*\}', response.text).group(0)
+        data = json.loads(json_str)
+        print(f"[DEBUG] Generated {len(data.get('questions', []))} questions.")
+        return {"questions": data.get("questions", []), "summary": data.get("summary", "")}
+    except Exception as e:
+        print(f"[ERROR] generate_questions_from_experience failed: {e}")
+        return {"questions": [], "summary": f"Error: {e}"}
+
+def extract_project_section(resume_text: str) -> str:
+    """
+    Extract the 'Projects' section from the resume text using LLM.
+    """
+    print(f"[DEBUG] Extracting projects from {len(resume_text)} chars...")
+    prompt = f"""
+You are a resume parser. Extract the "Projects" or "Academic Projects" or "Personal Projects" section from the following resume text.
+Return ONLY the text content of that section. If not found, return an empty string.
+
+---
+Resume Text:
+{resume_text}
+---
+"""
+    try:
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        response = model.generate_content(prompt)
+        extracted = response.text.strip()
+        print(f"[DEBUG] Extracted projects length: {len(extracted)}")
+        return extracted
+    except Exception as e:
+        print(f"[ERROR] extract_project_section failed: {e}")
+        return ""
+
+def generate_questions_from_projects(project_text: str) -> List[Dict]:
+    """
+    Generate questions for each project found in the text.
+    Returns a list of dicts: [{'project_name': '...', 'questions': [], 'summary': '...'}]
+    """
+    if not project_text:
+        return []
+        
+    print(f"[DEBUG] Generating questions from project text ({len(project_text)} chars)...")
+    prompt = f"""
+You are a technical interviewer. Read the following Projects section from a candidate's resume.
+Identify each distinct project. For each project:
+1. Extract the Project Name.
+2. Write a short summary of the project.
+3. Generate 3-5 basic, easy-to-answer technical questions specific to that project.
+
+Respond ONLY with a JSON array of objects, where each object has:
+- project_name: string
+- summary: string
+- questions: array of strings
+
+---
+Projects Section:
+{project_text}
+---
+"""
+    model = genai.GenerativeModel('gemini-2.0-flash')
+    response = model.generate_content(prompt)
+    import re, json
+    try:
+        json_str = re.search(r'\[[\s\S]*\]', response.text).group(0)
+        data = json.loads(json_str)
+        print(f"[DEBUG] Generated questions for {len(data)} projects.")
+        return data
+    except Exception as e:
+        print(f"[ERROR] generate_questions_from_projects failed: {e}")
+        return []

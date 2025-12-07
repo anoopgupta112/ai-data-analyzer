@@ -1,37 +1,198 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Resume Match Results</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root{--bg:#0b1220;--panel:#0f172a;--muted:#9fb0c5;--line:#1e2d49;--acc:#6366f1;--acc2:#22d3ee}
-    *{box-sizing:border-box} html,body{margin:0;background:#0b1220;color:#e2e8f0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .nav{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,rgba(2,6,23,.85),rgba(2,6,23,.5));backdrop-filter:blur(8px);border-bottom:1px solid #11213a}
-    .nav-inner{max-width:1150px;margin:0 auto;display:flex;align-items:center;padding:14px 20px}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:800}
-    .dot{width:26px;height:26px;border-radius:8px;background:conic-gradient(from 140deg,#6366f1,#22d3ee,#38bdf8,#6366f1)}
-    .links{margin-left:auto;display:flex;gap:12px}
-    .link{padding:8px 12px;border-radius:10px;color:#cbd5e1;border:1px solid transparent}
-    .link:hover{border-color:#2a3f63;background:#0c1e37}
+    :root {
+      --bg: #0b1220;
+      --panel: #0f172a;
+      --muted: #9fb0c5;
+      --line: #1e2d49;
+      --acc: #6366f1;
+      --acc2: #22d3ee
+    }
 
-    .wrap{max-width:1150px;margin:28px auto;padding:0 20px}
-    h1{margin:0 0 12px}
-    .controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-    .controls input{padding:10px 12px;border-radius:10px;border:1px solid #213456;background:#0b172c;color:#e5edff}
-    .btn{padding:10px 12px;border-radius:10px;border:1px solid #213456;background:#0f2039;color:#cfe4ff;font-weight:700;cursor:pointer}
-    .btn:hover{background:#0d2443;border-color:#2c4e86}
+    * {
+      box-sizing: border-box
+    }
 
-    .info{margin-bottom:18px;background:#0b1527;border:1px solid #1b2b48;padding:16px;border-radius:12px}
-    .result-card{background:linear-gradient(180deg,rgba(148,163,184,.06),rgba(148,163,184,.03));border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
-    .resume-id{font-size:13px;color:#9fb0c5;margin-bottom:4px}
-    .result-card h3{margin:0 0 6px}
-    .tag{display:inline-block;margin-left:8px;padding:4px 8px;border-radius:999px;background:linear-gradient(90deg,#10b981,#22d3ee);color:#021523;font-weight:900;font-size:12px}
-    .collapsible{width:100%;text-align:left;margin-top:10px;padding:10px 12px;border:none;border-radius:10px;background:#0e1a2d;border:1px solid #223a61;color:#cfe4ff;font-weight:700;cursor:pointer}
-    .collapsible.active,.collapsible:hover{background:#0d2443;border-color:#2c4e86}
-    .content{display:none;padding:10px 12px;background:#0b1526;border-radius:10px;margin-top:6px}
-    .download-link{display:inline-block;margin-top:10px;color:#00131f;background:linear-gradient(90deg,#10b981,#22d3ee);padding:8px 12px;border-radius:10px;font-weight:800;text-decoration:none}
+    html,
+    body {
+      margin: 0;
+      background: #0b1220;
+      color: #e2e8f0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: linear-gradient(180deg, rgba(2, 6, 23, .85), rgba(2, 6, 23, .5));
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #11213a
+    }
+
+    .nav-inner {
+      max-width: 1150px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      padding: 14px 20px
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800
+    }
+
+    .dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: conic-gradient(from 140deg, #6366f1, #22d3ee, #38bdf8, #6366f1)
+    }
+
+    .links {
+      margin-left: auto;
+      display: flex;
+      gap: 12px
+    }
+
+    .link {
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: #cbd5e1;
+      border: 1px solid transparent
+    }
+
+    .link:hover {
+      border-color: #2a3f63;
+      background: #0c1e37
+    }
+
+    .wrap {
+      max-width: 1150px;
+      margin: 28px auto;
+      padding: 0 20px
+    }
+
+    h1 {
+      margin: 0 0 12px
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px
+    }
+
+    .controls input {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #213456;
+      background: #0b172c;
+      color: #e5edff
+    }
+
+    .btn {
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #213456;
+      background: #0f2039;
+      color: #cfe4ff;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .btn:hover {
+      background: #0d2443;
+      border-color: #2c4e86
+    }
+
+    .info {
+      margin-bottom: 18px;
+      background: #0b1527;
+      border: 1px solid #1b2b48;
+      padding: 16px;
+      border-radius: 12px
+    }
+
+    .result-card {
+      background: linear-gradient(180deg, rgba(148, 163, 184, .06), rgba(148, 163, 184, .03));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 16px
+    }
+
+    .resume-id {
+      font-size: 13px;
+      color: #9fb0c5;
+      margin-bottom: 4px
+    }
+
+    .result-card h3 {
+      margin: 0 0 6px
+    }
+
+    .tag {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10b981, #22d3ee);
+      color: #021523;
+      font-weight: 900;
+      font-size: 12px
+    }
+
+    .collapsible {
+      width: 100%;
+      text-align: left;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 10px;
+      background: #0e1a2d;
+      border: 1px solid #223a61;
+      color: #cfe4ff;
+      font-weight: 700;
+      cursor: pointer
+    }
+
+    .collapsible.active,
+    .collapsible:hover {
+      background: #0d2443;
+      border-color: #2c4e86
+    }
+
+    .content {
+      display: none;
+      padding: 10px 12px;
+      background: #0b1526;
+      border-radius: 10px;
+      margin-top: 6px
+    }
+
+    .download-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #00131f;
+      background: linear-gradient(90deg, #10b981, #22d3ee);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      text-decoration: none
+    }
   </style>
 </head>
+
 <body>
   <div class="nav">
     <div class="nav-inner">
@@ -80,6 +241,52 @@
         try { obj = typeof r.match_report === 'string' ? JSON.parse(r.match_report) : r.match_report; }
         catch { obj = { percent_match: 0, description: 'Invalid JSON', positive: '', negative: '' }; }
 
+        // Generate Question HTML
+        let githubHtml = '';
+        let experienceHtml = '';
+        let projectHtml = '';
+        let jdHtml = '';
+
+        if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
+          r.github_questions.forEach((qset) => {
+            let html = '';
+            const isExp = qset.source === 'experience';
+            const isProj = qset.source === 'project';
+            const isGithub = qset.source === 'github';
+            const isJD = qset.source === 'jd';
+
+            let title = qset.repo || 'Unknown Source';
+            if (isExp) title = 'Experience';
+            if (isProj) title = `Project: ${qset.repo}`; // repo holds project name for source='project'
+            if (isGithub) title = `GitHub: ${qset.repo}`;
+            if (isJD) title = 'Job Description';
+
+            html += `<button class='collapsible' style='margin-top:10px;'>${title}</button>`;
+            html += `<div class='content'>`;
+            if (qset.summary) {
+              html += `<button class='collapsible' style='margin-top:6px;'>Summary</button>`;
+              html += `<div class='content'><div style='margin:6px 0 10px 0;'>${qset.summary}</div></div>`;
+            }
+            if (qset.questions && qset.questions.length) {
+              html += `<button class='collapsible' style='margin-top:6px;'>Questions</button>`;
+              html += `<div class='content'><ul style='margin:8px 0 0 0;padding-left:18px;'>` + qset.questions.map(q => `<li>${q}</li>`).join('') + '</ul></div>';
+            }
+            html += `</div>`;
+
+            if (isExp) {
+              experienceHtml += html;
+            } else if (isProj || isGithub) {
+              projectHtml += html;
+            } else if (isJD) {
+              jdHtml += html;
+            }
+          });
+        }
+
+        if (!projectHtml) projectHtml = '<i>No Project/GitHub questions found.</i>';
+        if (!experienceHtml) experienceHtml = '<i>No Experience questions found.</i>';
+        if (!jdHtml) jdHtml = '<i>No Job Description questions found.</i>';
+
         const div = document.createElement('div');
         div.className = 'result-card';
         div.innerHTML = `
@@ -90,14 +297,20 @@
           <div class="content">${renderNested(obj.positive)}</div>
           <button class="collapsible">Negative</button>
           <div class="content">${renderNested(obj.negative)}</div>
-          <button class="collapsible">GitHub Questions</button>
-          <div class="content github-analysis" id="githubAnalysis_${idx}"></div>
+          <button class="collapsible">Projects</button>
+          <div class="content project-analysis">${projectHtml}</div>
+          <button class="collapsible">Job Description Questions</button>
+          <div class="content jd-analysis">${jdHtml}</div>
+          <button class="collapsible">Experience Questions</button>
+          <div class="content experience-analysis">${experienceHtml}</div>
         `;
         container.appendChild(div);
       });
+
       const collapsibles = container.querySelectorAll('.collapsible');
       collapsibles.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
           this.classList.toggle('active');
           const content = this.nextElementSibling;
           content.style.display = content.style.display === 'block' ? 'none' : 'block';
@@ -110,7 +323,7 @@
         return '<ul style="margin:0;padding-left:18px">' + value.map(item => {
           if (typeof item === 'string') return `<li>${item}</li>`;
           else if (typeof item === 'object')
-            return `<li>${Object.entries(item).map(([k,v]) => `<div class='nested'><strong>${k}:</strong> ${Array.isArray(v)? v.join(', '): v}</div>`).join('')}</li>`;
+            return `<li>${Object.entries(item).map(([k, v]) => `<div class='nested'><strong>${k}:</strong> ${Array.isArray(v) ? v.join(', ') : v}</div>`).join('')}</li>`;
           else return `<li>${JSON.stringify(item)}</li>`;
         }).join('') + '</ul>';
       } else {
@@ -128,32 +341,7 @@
       render(filtered);
     }
 
-    function showAllGithubQuestions() {
-      rawData.forEach((r, idx) => {
-        const analysisDiv = document.getElementById(`githubAnalysis_${idx}`);
-        if (Array.isArray(r.github_questions) && r.github_questions.length > 0) {
-          let html = '';
-          r.github_questions.forEach((qset) => {
-            html += `<button class='collapsible' style='margin-top:10px;'>Repo: <a href='${qset.repo}' target='_blank'>${qset.repo}</a></button>`;
-            html += `<div class='content'>`;
-            if (qset.summary) {
-              html += `<button class='collapsible' style='margin-top:6px;'>Summary</button>`;
-              html += `<div class='content'><div style='margin:6px 0 10px 0;'>${qset.summary}</div></div>`;
-            }
-            if (qset.questions && qset.questions.length) {
-              html += `<button class='collapsible' style='margin-top:6px;'>Questions</button>`;
-              html += `<div class='content'><ul style='margin:8px 0 0 0;padding-left:18px;'>` + qset.questions.map(q => `<li>${q}</li>`).join('') + '</ul></div>';
-            }
-            html += `</div>`;
-          });
-          analysisDiv.innerHTML = html;
-          const inner = analysisDiv.querySelectorAll('.collapsible');
-          inner.forEach(btn => btn.addEventListener('click', function(){ this.classList.toggle('active'); const c = this.nextElementSibling; c.style.display = c.style.display === 'block' ? 'none' : 'block'; }));
-        } else {
-          analysisDiv.innerHTML = '<i>No GitHub questions found for this PDF.</i>';
-        }
-      });
-    }
+    // function showAllGithubQuestions() { ... } // Removed as it's now integrated into render
 
     function downloadAllCSVs() {
       rawData.forEach((r) => {
@@ -195,4 +383,5 @@
     renderAllGithubLinks();
   </script>
 </body>
+
 </html>

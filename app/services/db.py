@@ -7,7 +7,7 @@ from sqlalchemy.exc import OperationalError
 from dotenv import load_dotenv
 
 load_dotenv()
-MYSQL_URL = os.getenv("MYSQL_URL") or "check url"
+MYSQL_URL = os.getenv("MYSQL_URL") or "postgresql://Anoop_2:1234@localhost:5432/ai_analyzer"
 engine = create_engine(MYSQL_URL, pool_pre_ping=True, echo=False, future=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
