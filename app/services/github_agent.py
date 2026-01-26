@@ -6,7 +6,7 @@ from typing import Dict, List
 import requests
 from dotenv import load_dotenv
 
-from app.services.openrouter_client import OpenRouterError, complete_chat
+from app.services.ai_client import AIClientError, complete_chat
 
 load_dotenv()
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")  # Optional: for higher rate limits
@@ -17,8 +17,8 @@ GITHUB_API = "https://api.github.com"
 def _complete_prompt(prompt: str) -> str:
     try:
         return complete_chat(prompt)
-    except OpenRouterError as exc:
-        raise ValueError(f"OpenRouter request failed: {exc}") from exc
+    except AIClientError as exc:
+        raise ValueError(f"AI client request failed: {exc}") from exc
 
 
 def fetch_github_code(url: str, max_lines: int = 200) -> str:

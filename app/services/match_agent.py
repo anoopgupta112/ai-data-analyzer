@@ -6,7 +6,7 @@ from typing import Dict, Any
 
 from dotenv import load_dotenv
 
-from app.services.openrouter_client import OpenRouterError, complete_chat
+from app.services.ai_client import AIClientError, complete_chat
 
 load_dotenv()
 
@@ -41,8 +41,8 @@ Resume Text:
 """
     try:
         response_text = complete_chat(prompt)
-    except OpenRouterError as exc:
-        raise ValueError(f"OpenRouter request failed: {exc}") from exc
+    except AIClientError as exc:
+        raise ValueError(f"AI client request failed: {exc}") from exc
     print(response_text)
     data = extract_json_from_text(response_text)
     return data
